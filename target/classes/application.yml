@@ -1,0 +1,85 @@
+server:
+  port: 5000
+  servlet:
+    context-path: /
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+spring:
+  application:
+    name: BrokerWallet Backend
+  
+  # 输出编码配置
+  output:
+    ansi:
+      enabled: detect
+  
+  # 数据库配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/brokerwallet?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: Wan05609  # 请根据您的MySQL配置修改密码
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: update  # 自动创建/更新表结构
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        format_sql: true
+
+  # 文件上传配置
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+      file-size-threshold: 2KB
+
+# 自定义配置
+brokerwallet:
+  file:
+    # 文件存储路径（相对于项目根目录）
+    upload-path: uploads/
+    # 允许的文件类型
+    allowed-types: 
+      - image/jpeg
+      - image/png
+      - image/gif
+      - application/pdf
+      - application/msword
+      - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+      - text/plain
+    # 最大文件大小（字节）
+    max-size: 52428800  # 50MB
+
+# 缓存配置
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=1000,expireAfterWrite=5m  # 最大1000条记录，5分钟过期
+    cache-names:
+      - medal-ranking      # 勋章排行榜缓存
+      - user-statistics    # 用户统计信息缓存
+      - proof-statistics   # 证明文件统计缓存
+
+# 日志配置
+logging:
+  level:
+    com.brokerwallet: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.springframework.cache: DEBUG  # 缓存日志
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  charset:
+    console: UTF-8
+    file: UTF-8
+  file:
+    name: logs/brokerwallet-backend.log
+
