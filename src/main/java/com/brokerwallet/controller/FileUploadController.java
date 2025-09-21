@@ -141,8 +141,16 @@ public class FileUploadController {
                 savedNftImage = saveNftImageToDatabase(nftImage, nftImagePath, user.getId(), firstProofFileId);
             }
             
-            // 5. 构建响应
+            // 5. 构建详细响应（为Android端优化）
             Map<String, Object> data = new HashMap<>();
+            
+            // 生成提交ID（基于第一个证明文件的ID）
+            String submissionId = "SUB_" + savedProofFiles.get(0).getId() + "_" + System.currentTimeMillis();
+            data.put("submissionId", submissionId);
+            data.put("status", "PENDING");  // 初始状态为待审核
+            data.put("submitTime", LocalDateTime.now().toString());
+            
+            // 用户信息
             data.put("user", Map.of(
                     "id", user.getId(),
                     "walletAddress", user.getWalletAddress(),
@@ -159,23 +167,40 @@ public class FileUploadController {
                     "fileName", proofFile.getFileName(),
                     "originalName", proofFile.getOriginalName(),
                     "fileSize", proofFile.getFileSize(),
-                    "uploadTime", proofFile.getUploadTime().toString()
+                    "fileType", proofFile.getFileType(),
+                    "uploadTime", proofFile.getUploadTime().toString(),
+                    "auditStatus", proofFile.getAuditStatus().name()
                 ));
             }
             data.put("proofFiles", proofFilesList);
+            data.put("totalProofFiles", proofFilesList.size());
             
+            // NFT图片信息
             if (savedNftImage != null) {
                 data.put("nftImage", Map.of(
                         "id", savedNftImage.getId(),
                         "imageName", savedNftImage.getImageName(),
                         "originalName", savedNftImage.getOriginalName(),
                         "imageSize", savedNftImage.getImageSize(),
-                        "uploadTime", savedNftImage.getUploadTime().toString()
+                        "imageType", savedNftImage.getImageType(),
+                        "uploadTime", savedNftImage.getUploadTime().toString(),
+                        "mintStatus", savedNftImage.getMintStatus().name()
                 ));
+                data.put("hasNftImage", true);
+            } else {
+                data.put("hasNftImage", false);
             }
             
+            // 下一步提示
+            data.put("nextSteps", List.of(
+                "您的材料已成功提交到系统",
+                "管理员将在24小时内进行审核",
+                "审核完成后您将获得相应的勋章",
+                "可以在勋章排行榜中查看审核进度"
+            ));
+            
             response.put("success", true);
-            response.put("message", "文件上传成功！");
+            response.put("message", "提交成功！您的证明材料已收到，请等待管理员审核。");
             response.put("data", data);
             
             logger.info("Multiple files submission successful - User ID: {}, Proof files count: {}", user.getId(), savedProofFiles.size());
@@ -265,5 +290,241 @@ public class FileUploadController {
         asyncFileProcessorService.calculateFileHashAsync(imagePath);
         
         return savedNftImage;
+    }
+    
+    /**
+     * 获取用户提交历史
+     */
+    @GetMapping("/user/submissions")
+    public ResponseEntity<Map<String, Object>> getUserSubmissions(
+            @RequestParam String walletAddress,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            logger.info("获取用户提交历史: {}, page={}, size={}", walletAddress, page, size);
+            
+            // 查找用户
+            UserAccount user = userAccountService.findByWalletAddress(walletAddress);
+            if (user == null) {
+                response.put("success", false);
+                response.put("message", "用户不存在");
+                return ResponseEntity.status(404).body(response);
+            }
+            
+            // 获取用户的所有证明文件（按时间倒序）
+            List<ProofFile> allProofFiles = proofFileRepository.findByUserAccountIdOrderByUploadTimeDesc(user.getId());
+            
+            // 简单分页处理
+            int start = page * size;
+            int end = Math.min(start + size, allProofFiles.size());
+            List<ProofFile> pagedFiles = allProofFiles.subList(start, end);
+            
+            List<Map<String, Object>> submissions = new ArrayList<>();
+            for (ProofFile proofFile : pagedFiles) {
+                Map<String, Object> submission = new HashMap<>();
+                
+                // 基本信息
+                submission.put("submissionId", "SUB_" + proofFile.getId() + "_" + proofFile.getUploadTime().toString().hashCode());
+                submission.put("id", proofFile.getId());
+                submission.put("fileName", proofFile.getOriginalName());
+                submission.put("fileSize", proofFile.getFileSize());
+                submission.put("fileType", proofFile.getFileType());
+                submission.put("uploadTime", proofFile.getUploadTime().toString());
+                
+                // 审核状态
+                submission.put("auditStatus", proofFile.getAuditStatus().name());
+                submission.put("auditStatusDesc", getAuditStatusDescription(proofFile.getAuditStatus()));
+                if (proofFile.getAuditTime() != null) {
+                    submission.put("auditTime", proofFile.getAuditTime().toString());
+                }
+                
+                // 勋章信息
+                submission.put("medalAwarded", proofFile.getMedalAwarded().name());
+                submission.put("medalAwardedDesc", getMedalDescription(proofFile.getMedalAwarded()));
+                if (proofFile.getMedalAwardTime() != null) {
+                    submission.put("medalAwardTime", proofFile.getMedalAwardTime().toString());
+                }
+                if (proofFile.getMedalTransactionHash() != null) {
+                    submission.put("medalTransactionHash", proofFile.getMedalTransactionHash());
+                }
+                
+                // 关联的NFT图片
+                List<NftImage> nftImages = nftImageRepository.findByProofFileId(proofFile.getId());
+                if (!nftImages.isEmpty()) {
+                    NftImage nftImage = nftImages.get(0);
+                    submission.put("nftImage", Map.of(
+                        "id", nftImage.getId(),
+                        "originalName", nftImage.getOriginalName(),
+                        "mintStatus", nftImage.getMintStatus().name(),
+                        "mintStatusDesc", getMintStatusDescription(nftImage.getMintStatus()),
+                        "tokenId", nftImage.getTokenId() != null ? nftImage.getTokenId() : "",
+                        "transactionHash", nftImage.getTransactionHash() != null ? nftImage.getTransactionHash() : ""
+                    ));
+                }
+                
+                submissions.add(submission);
+            }
+            
+            response.put("success", true);
+            response.put("data", submissions);
+            response.put("pagination", Map.of(
+                "currentPage", page,
+                "pageSize", size,
+                "totalItems", allProofFiles.size(),
+                "totalPages", (int) Math.ceil((double) allProofFiles.size() / size)
+            ));
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("获取用户提交历史失败", e);
+            response.put("success", false);
+            response.put("message", "服务器错误: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 获取单个提交的详细信息
+     */
+    @GetMapping("/submission/detail/{id}")
+    public ResponseEntity<Map<String, Object>> getSubmissionDetail(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            logger.info("获取提交详情: {}", id);
+            
+            // 查找证明文件
+            ProofFile proofFile = proofFileRepository.findById(id).orElse(null);
+            if (proofFile == null) {
+                response.put("success", false);
+                response.put("message", "提交记录不存在");
+                return ResponseEntity.status(404).body(response);
+            }
+            
+            // 获取用户信息
+            UserAccount user = userAccountService.findById(proofFile.getUserAccountId());
+            
+            Map<String, Object> detail = new HashMap<>();
+            detail.put("submissionId", "SUB_" + proofFile.getId() + "_" + proofFile.getUploadTime().toString().hashCode());
+            detail.put("id", proofFile.getId());
+            detail.put("fileName", proofFile.getOriginalName());
+            detail.put("fileSize", proofFile.getFileSize());
+            detail.put("fileType", proofFile.getFileType());
+            detail.put("uploadTime", proofFile.getUploadTime().toString());
+            
+            // 审核状态和详细信息
+            detail.put("auditStatus", proofFile.getAuditStatus().name());
+            detail.put("auditStatusDesc", getAuditStatusDescription(proofFile.getAuditStatus()));
+            if (proofFile.getAuditTime() != null) {
+                detail.put("auditTime", proofFile.getAuditTime().toString());
+            }
+            
+            // 勋章信息
+            detail.put("medalAwarded", proofFile.getMedalAwarded().name());
+            detail.put("medalAwardedDesc", getMedalDescription(proofFile.getMedalAwarded()));
+            if (proofFile.getMedalAwardTime() != null) {
+                detail.put("medalAwardTime", proofFile.getMedalAwardTime().toString());
+            }
+            
+            // 用户信息
+            if (user != null) {
+                detail.put("user", Map.of(
+                    "walletAddress", user.getWalletAddress(),
+                    "displayName", user.getDisplayName() != null ? user.getDisplayName() : "",
+                    "totalMedals", user.getGoldMedals() + user.getSilverMedals() + user.getBronzeMedals()
+                ));
+            }
+            
+            // 处理进度
+            List<String> processSteps = new ArrayList<>();
+            processSteps.add("✅ 文件已上传");
+            
+            switch (proofFile.getAuditStatus()) {
+                case PENDING:
+                    processSteps.add("⏳ 等待管理员审核");
+                    processSteps.add("⏸️ 勋章分配");
+                    break;
+                case APPROVED:
+                    processSteps.add("✅ 审核通过");
+                    if (proofFile.getMedalAwarded() != ProofFile.MedalType.NONE) {
+                        processSteps.add("✅ 勋章已分配: " + getMedalDescription(proofFile.getMedalAwarded()));
+                    } else {
+                        processSteps.add("⏳ 等待勋章分配");
+                    }
+                    break;
+                case REJECTED:
+                    processSteps.add("❌ 审核未通过");
+                    break;
+            }
+            
+            detail.put("processSteps", processSteps);
+            
+            response.put("success", true);
+            response.put("data", detail);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("获取提交详情失败", e);
+            response.put("success", false);
+            response.put("message", "服务器错误: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 获取审核状态描述
+     */
+    private String getAuditStatusDescription(ProofFile.AuditStatus status) {
+        switch (status) {
+            case PENDING:
+                return "等待审核";
+            case APPROVED:
+                return "审核通过";
+            case REJECTED:
+                return "审核拒绝";
+            default:
+                return status.name();
+        }
+    }
+    
+    /**
+     * 获取勋章描述
+     */
+    private String getMedalDescription(ProofFile.MedalType medal) {
+        switch (medal) {
+            case GOLD:
+                return "金牌";
+            case SILVER:
+                return "银牌";
+            case BRONZE:
+                return "铜牌";
+            case NONE:
+                return "无勋章";
+            default:
+                return medal.name();
+        }
+    }
+    
+    /**
+     * 获取NFT铸造状态描述
+     */
+    private String getMintStatusDescription(NftImage.MintStatus status) {
+        switch (status) {
+            case NOT_STARTED:
+                return "未开始";
+            case PROCESSING:
+                return "铸造中";
+            case SUCCESS:
+                return "铸造成功";
+            case FAILED:
+                return "铸造失败";
+            default:
+                return status.name();
+        }
     }
 }
