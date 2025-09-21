@@ -1,6 +1,8 @@
 package com.brokerwallet.repository;
 
 import com.brokerwallet.entity.ProofFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,6 +23,11 @@ public interface ProofFileRepository extends JpaRepository<ProofFile, Long> {
      * 根据文件名查找文件
      */
     Optional<ProofFile> findByFileName(String fileName);
+    
+    /**
+     * 根据文件名查找文件（返回单个对象）
+     */
+    ProofFile findFirstByFileName(String fileName);
     
     /**
      * 根据文件哈希查找文件（用于防重复上传）
@@ -88,5 +95,27 @@ public interface ProofFileRepository extends JpaRepository<ProofFile, Long> {
      */
     @Query("SELECT p FROM ProofFile p WHERE (p.fileName LIKE %:keyword% OR p.originalName LIKE %:keyword%) AND p.status = :status ORDER BY p.uploadTime DESC")
     List<ProofFile> searchByKeyword(@Param("keyword") String keyword, @Param("status") ProofFile.FileStatus status);
+    
+    // 审核状态相关查询方法
+    
+    /**
+     * 根据审核状态查找文件（分页）
+     */
+    Page<ProofFile> findByAuditStatus(ProofFile.AuditStatus auditStatus, Pageable pageable);
+    
+    /**
+     * 根据用户ID和审核状态查找文件
+     */
+    List<ProofFile> findByUserAccountIdAndAuditStatus(Long userAccountId, ProofFile.AuditStatus auditStatus);
+    
+    /**
+     * 统计各审核状态的文件数量
+     */
+    long countByAuditStatus(ProofFile.AuditStatus auditStatus);
+    
+    /**
+     * 根据勋章类型查找文件
+     */
+    List<ProofFile> findByMedalAwarded(ProofFile.MedalType medalType);
 }
 

@@ -24,9 +24,14 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
     Optional<UserAccount> findByWalletAddress(String walletAddress);
     
     /**
-     * 根据显示名称查找用户
+     * 根据显示名称查找用户（模糊匹配）
      */
     List<UserAccount> findByDisplayNameContainingIgnoreCase(String displayName);
+    
+    /**
+     * 根据显示名称精确查找用户
+     */
+    Optional<UserAccount> findByDisplayName(String displayName);
     
     /**
      * 根据账户状态查找用户

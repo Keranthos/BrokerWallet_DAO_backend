@@ -67,8 +67,30 @@ public class UserAccountService {
     /**
      * 根据ID查找用户
      */
-    public Optional<UserAccount> findById(Long id) {
+    public Optional<UserAccount> findByIdOptional(Long id) {
         return userAccountRepository.findById(id);
+    }
+    
+    /**
+     * 根据ID查找用户（直接返回实体）
+     */
+    public UserAccount findById(Long id) {
+        return userAccountRepository.findById(id).orElse(null);
+    }
+    
+    /**
+     * 根据显示名称或钱包地址查找用户
+     */
+    public UserAccount findByDisplayNameOrWalletAddress(String identifier) {
+        // 先尝试按显示名称查找
+        Optional<UserAccount> userByDisplayName = userAccountRepository.findByDisplayName(identifier);
+        if (userByDisplayName.isPresent()) {
+            return userByDisplayName.get();
+        }
+        
+        // 再尝试按钱包地址查找
+        Optional<UserAccount> userByWallet = userAccountRepository.findByWalletAddress(identifier);
+        return userByWallet.orElse(null);
     }
     
     /**
