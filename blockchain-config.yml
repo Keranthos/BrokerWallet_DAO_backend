@@ -1,0 +1,29 @@
+# 区块链节点配置文件
+# 此文件放在根目录，方便修改节点端口和地址
+
+# BrokerChain 区块链节点配置
+blockchain:
+  # 节点RPC地址 (经常需要修改的端口)
+  rpc-url: "http://127.0.0.1:23010"
+  
+  # 账户地址 (用于发送交易的钱包地址)
+  account-address: "0x8C056ccb92c567dA3feE27c23d4f2F107F203879"
+  
+  # 智能合约地址
+  contracts:
+    # 勋章系统合约地址
+    medal-contract: "0x1a202bfA10eA97a742ad22FcB1a7913821bF1B18"
+    # NFT铸造合约地址  
+    nft-contract: "0x382CA68B8133893fDf46170Efd839c7703d9e9aE"
+
+# 连接超时配置
+timeout:
+  connect: 30    # 连接超时(秒)
+  read: 120      # 读取超时(秒)
+  write: 30      # 写入超时(秒)
+
+# 日志配置
+logging:
+  level:
+    org.web3j: INFO
+    com.brokerwallet.blockchain: DEBUG

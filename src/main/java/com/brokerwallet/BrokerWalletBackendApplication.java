@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * BrokerWallet后端应用程序启动类
@@ -17,6 +18,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @EnableConfigurationProperties
 @EnableCaching  // 启用缓存支持
 @EnableAsync    // 启用异步支持
+@EnableScheduling  // 启用定时任务支持
 public class BrokerWalletBackendApplication {
 
     public static void main(String[] args) {
@@ -25,10 +27,14 @@ public class BrokerWalletBackendApplication {
         System.out.println("   - 证明材料上传");
         System.out.println("   - NFT照片铸造");
         System.out.println("   - 勋章排行榜");
+        System.out.println("   - 区块链集成");
+        System.out.println("   - 勋章查询与发放");
+        System.out.println("   - 数据同步机制");
         System.out.println("   - 文件管理");
         System.out.println("   - 数据库存储");
         System.out.println("   - 缓存系统");
         System.out.println("   - 异步处理");
+        System.out.println("   - 定时任务");
         
         SpringApplication.run(BrokerWalletBackendApplication.class, args);
         

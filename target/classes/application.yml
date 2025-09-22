@@ -74,6 +74,7 @@ logging:
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.springframework.cache: DEBUG  # 缓存日志
+    org.web3j: INFO  # Web3j日志级别
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
@@ -82,4 +83,9 @@ logging:
     file: UTF-8
   file:
     name: logs/brokerwallet-backend.log
+
+# 区块链配置（从根目录配置文件加载）
+spring:
+  config:
+    import: "file:blockchain-config.yml"
 

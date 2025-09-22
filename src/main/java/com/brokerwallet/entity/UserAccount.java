@@ -62,6 +62,12 @@ public class UserAccount {
     private Integer bronzeMedals = 0;
     
     /**
+     * 总勋章数量
+     */
+    @Column(name = "total_medals", nullable = false)
+    private Integer totalMedals = 0;
+    
+    /**
      * 总证明文件数
      */
     @Column(name = "total_proofs", nullable = false)
@@ -204,6 +210,14 @@ public class UserAccount {
     
     public void setBronzeMedals(Integer bronzeMedals) {
         this.bronzeMedals = bronzeMedals;
+    }
+    
+    public Integer getTotalMedals() {
+        return totalMedals;
+    }
+    
+    public void setTotalMedals(Integer totalMedals) {
+        this.totalMedals = totalMedals;
     }
     
     public Integer getTotalProofs() {
