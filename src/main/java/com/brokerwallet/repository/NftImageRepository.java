@@ -33,6 +33,11 @@ public interface NftImageRepository extends JpaRepository<NftImage, Long> {
     List<NftImage> findByUserAccountIdOrderByUploadTimeDesc(Long userAccountId);
     
     /**
+     * 根据证明文件ID查找关联的NFT图片
+     */
+    List<NftImage> findByProofFileId(Long proofFileId);
+    
+    /**
      * 根据用户账户ID和状态查找图片列表
      */
     List<NftImage> findByUserAccountIdAndStatusOrderByUploadTimeDesc(Long userAccountId, NftImage.ImageStatus status);

@@ -6,6 +6,7 @@ com\brokerwallet\service\UserAccountService.class
 com\brokerwallet\entity\UserAccount$AccountStatus.class
 com\brokerwallet\controller\SystemController.class
 com\brokerwallet\repository\NftImageRepository.class
+com\brokerwallet\controller\AdminController.class
 com\brokerwallet\entity\ProofFile$MedalType.class
 com\brokerwallet\entity\NftImage.class
 com\brokerwallet\BrokerWalletBackendApplication.class
