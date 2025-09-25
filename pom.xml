@@ -112,6 +112,13 @@
             <version>4.12.0</version>
         </dependency>
 
+        <!-- Lombok 代码生成工具 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <!-- 测试依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

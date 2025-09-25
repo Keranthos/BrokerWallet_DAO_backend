@@ -171,7 +171,7 @@ public class BlockchainSyncService {
             MedalQueryResult medalResult = blockchainService.queryUserMedals(walletAddress);
             
             // 更新数据库
-            UserAccount user = userAccountRepository.findByWalletAddress(walletAddress);
+            UserAccount user = userAccountRepository.findByWalletAddress(walletAddress).orElse(null);
             if (user != null) {
                 user.setGoldMedals(medalResult.getMedals().getGold());
                 user.setSilverMedals(medalResult.getMedals().getSilver());

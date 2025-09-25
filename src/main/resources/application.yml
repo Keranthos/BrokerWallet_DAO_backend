@@ -39,6 +39,18 @@ spring:
       max-file-size: 50MB
       max-request-size: 50MB
       file-size-threshold: 2KB
+  
+  # 区块链配置（从根目录配置文件加载）
+  config:
+    import: "file:./blockchain-config.yml"
+
+# 区块链配置
+blockchain:
+  rpc-url: "http://127.0.0.1:8545"
+  account-address: "0x8c056ccb92c567da3fee27c23d4f2f107f203879"
+  contracts:
+    medal-contract: "0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18"
+    nft-contract: "0x382ca68b8133893fdf46170efd839c7703d9e9ae"
 
 # 自定义配置
 brokerwallet:
@@ -84,8 +96,4 @@ logging:
   file:
     name: logs/brokerwallet-backend.log
 
-# 区块链配置（从根目录配置文件加载）
-spring:
-  config:
-    import: "file:blockchain-config.yml"
 

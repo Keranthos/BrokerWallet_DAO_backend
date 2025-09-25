@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * 从根目录的blockchain-config.yml文件读取配置
  */
 @Configuration
-@PropertySource("classpath:blockchain-config.yml")
+@PropertySource("file:blockchain-config.yml")
 @Slf4j
 public class BlockchainConfig {
 

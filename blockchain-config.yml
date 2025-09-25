@@ -7,14 +7,14 @@ blockchain:
   rpc-url: "http://127.0.0.1:23010"
   
   # 账户地址 (用于发送交易的钱包地址)
-  account-address: "0x8C056ccb92c567dA3feE27c23d4f2F107F203879"
+  account-address: "0x8c056ccb92c567da3fee27c23d4f2f107f203879"
   
   # 智能合约地址
   contracts:
     # 勋章系统合约地址
-    medal-contract: "0x1a202bfA10eA97a742ad22FcB1a7913821bF1B18"
+    medal-contract: "0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18"
     # NFT铸造合约地址  
-    nft-contract: "0x382CA68B8133893fDf46170Efd839c7703d9e9aE"
+    nft-contract: "0x382ca68b8133893fdf46170efd839c7703d9e9ae"
 
 # 连接超时配置
 timeout:

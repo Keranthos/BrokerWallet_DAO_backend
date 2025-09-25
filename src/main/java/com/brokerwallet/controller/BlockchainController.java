@@ -4,6 +4,9 @@ import com.brokerwallet.dto.MedalQueryResult;
 import com.brokerwallet.dto.DistributeRequest;
 import com.brokerwallet.dto.DistributeResponse;
 import com.brokerwallet.dto.UnsignedTransactionData;
+import com.brokerwallet.dto.NftMintRequest;
+import com.brokerwallet.dto.NftMintResponse;
+import com.brokerwallet.dto.NftQueryResult;
 import com.brokerwallet.service.BlockchainService;
 
 import lombok.RequiredArgsConstructor;
@@ -81,6 +84,20 @@ public class BlockchainController {
     }
 
     /**
+     * 查询全局统计
+     */
+    @GetMapping("/global-stats")
+    public ResponseEntity<String> queryGlobalStats() {
+        try {
+            String result = blockchainService.queryGlobalStats();
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("Failed to query global stats: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body("查询全局统计失败: " + e.getMessage());
+        }
+    }
+
+    /**
      * 测试合约连接
      */
     @GetMapping("/test-contract")
@@ -100,6 +117,47 @@ public class BlockchainController {
     @GetMapping("/health")
     public ResponseEntity<?> health() {
         return ResponseEntity.ok(new HealthResponse("OK", System.currentTimeMillis()));
+    }
+
+    /**
+     * 铸造NFT
+     */
+    @PostMapping("/nft/mint")
+    public ResponseEntity<NftMintResponse> mintNft(@Valid @RequestBody NftMintRequest request) {
+        try {
+            log.info("Minting NFT request: {}", request);
+            NftMintResponse response = blockchainService.mintNft(request);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Failed to mint NFT: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(NftMintResponse.builder()
+                    .success(false)
+                    .message("NFT铸造失败: " + e.getMessage())
+                    .build());
+        }
+    }
+
+    /**
+     * 查询用户拥有的NFT
+     */
+    @GetMapping("/nft/user/{address}")
+    public ResponseEntity<NftQueryResult> queryUserNfts(
+            @PathVariable 
+            @NotBlank(message = "地址不能为空")
+            @Pattern(regexp = "^0x[a-fA-F0-9]{40}$", message = "无效的以太坊地址")
+            String address) {
+        try {
+            log.info("Querying NFTs for address: {}", address);
+            NftQueryResult result = blockchainService.queryUserNfts(address);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("Failed to query user NFTs: {}", e.getMessage(), e);
+            return ResponseEntity.badRequest().body(NftQueryResult.builder()
+                    .address(address)
+                    .nfts(new java.util.ArrayList<>())
+                    .totalCount(0)
+                    .build());
+        }
     }
 
     // 内部类用于错误响应

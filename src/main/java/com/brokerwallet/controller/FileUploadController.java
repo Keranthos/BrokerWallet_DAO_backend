@@ -351,6 +351,19 @@ public class FileUploadController {
                     submission.put("medalTransactionHash", proofFile.getMedalTransactionHash());
                 }
                 
+                // 用户信息（前端需要）
+                submission.put("user", Map.of(
+                    "id", user.getId(),
+                    "walletAddress", user.getWalletAddress(),
+                    "displayName", user.getDisplayName() != null ? user.getDisplayName() : "",
+                    "representativeWork", user.getRepresentativeWork() != null ? user.getRepresentativeWork() : "",
+                    "showRepresentativeWork", user.getShowRepresentativeWork(),
+                    "totalMedals", user.getGoldMedals() + user.getSilverMedals() + user.getBronzeMedals(),
+                    "goldMedals", user.getGoldMedals(),
+                    "silverMedals", user.getSilverMedals(),
+                    "bronzeMedals", user.getBronzeMedals()
+                ));
+                
                 // 关联的NFT图片
                 List<NftImage> nftImages = nftImageRepository.findByProofFileId(proofFile.getId());
                 if (!nftImages.isEmpty()) {
