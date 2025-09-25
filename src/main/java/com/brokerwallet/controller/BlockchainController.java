@@ -145,10 +145,12 @@ public class BlockchainController {
             @PathVariable 
             @NotBlank(message = "地址不能为空")
             @Pattern(regexp = "^0x[a-fA-F0-9]{40}$", message = "无效的以太坊地址")
-            String address) {
+            String address,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
         try {
-            log.info("Querying NFTs for address: {}", address);
-            NftQueryResult result = blockchainService.queryUserNfts(address);
+            log.info("Querying NFTs for address: {}, page: {}, size: {}", address, page, size);
+            NftQueryResult result = blockchainService.queryUserNfts(address, page, size);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             log.error("Failed to query user NFTs: {}", e.getMessage(), e);

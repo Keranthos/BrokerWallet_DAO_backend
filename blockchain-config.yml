@@ -4,7 +4,7 @@
 # BrokerChain 区块链节点配置
 blockchain:
   # 节点RPC地址 (经常需要修改的端口)
-  rpc-url: "http://127.0.0.1:23010"
+  rpc-url: "http://127.0.0.1:55883"
   
   # 账户地址 (用于发送交易的钱包地址)
   account-address: "0x8c056ccb92c567da3fee27c23d4f2f107f203879"

@@ -421,7 +421,7 @@ public class BlockchainService {
     /**
      * 查询用户拥有的NFT
      */
-    public NftQueryResult queryUserNfts(String address) throws Exception {
+    public NftQueryResult queryUserNfts(String address, int page, int size) throws Exception {
         log.info("Querying NFTs for address: {}", address);
         
         try {
@@ -495,10 +495,25 @@ public class BlockchainService {
                 }
             }
             
+            // 应用分页逻辑
+            int totalCount = nftList.size();
+            int startIndex = page * size;
+            int endIndex = Math.min(startIndex + size, totalCount);
+            
+            List<NftQueryResult.NftInfo> paginatedNfts;
+            if (startIndex >= totalCount) {
+                paginatedNfts = new java.util.ArrayList<>();
+            } else {
+                paginatedNfts = nftList.subList(startIndex, endIndex);
+            }
+            
+            log.info("NFT分页结果: 总数={}, 页码={}, 每页大小={}, 返回数量={}", 
+                    totalCount, page, size, paginatedNfts.size());
+            
             return NftQueryResult.builder()
                     .address(address)
-                    .nfts(nftList)
-                    .totalCount(nftList.size())
+                    .nfts(paginatedNfts)
+                    .totalCount(totalCount)
                     .build();
                     
         } catch (Exception e) {
