@@ -1,5 +1,6 @@
 @echo off
 chcp 65001 >nul
+set JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8 -Dconsole.encoding=UTF-8
 echo ========================================
 echo    🚀 BrokerWallet后端服务启动脚本
 echo ========================================
@@ -98,7 +99,9 @@ echo 🏥 健康检查: http://localhost:5000/api/health
 echo 📱 手机访问: http://%LOCAL_IP%:5000
 echo.
 
-:: 使用Maven启动
+:: 使用Maven启动（设置UTF-8编码）
+set MAVEN_OPTS=-Dfile.encoding=UTF-8 -Dconsole.encoding=UTF-8 -Djava.awt.headless=true
+set JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF-8 -Dconsole.encoding=UTF-8
 mvn spring-boot:run
 
 :: 如果Maven启动失败，提示用户

@@ -19427,3 +19427,1767 @@ java.lang.IndexOutOfBoundsException: Index: 0
 2025-09-25 17:28:46 [http-nio-5000-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.BlockchainController#queryUserNfts(String, int, int)
 2025-09-25 17:28:46 [http-nio-5000-exec-8] INFO  c.b.controller.BlockchainController - Querying NFTs for address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879, page: 0, size: 5
 2025-09-25 17:28:46 [http-nio-5000-exec-8] INFO  c.b.service.BlockchainService - Querying NFTs for address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:28:53 [http-nio-5000-exec-8] INFO  c.b.service.BlockchainService - NFT分页结果: 总数=16, 页码=0, 每页大小=5, 返回数量=5
+2025-09-25 17:28:53 [http-nio-5000-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-09-25 17:28:53 [http-nio-5000-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [NftQueryResult(address=0x8c056ccb92c567da3fee27c23d4f2f107f203879, nfts=[NftQueryResult.NftInfo(toke (truncated)...]
+2025-09-25 17:28:53 [http-nio-5000-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-09-25 17:33:18 [scheduling-1] INFO  c.b.service.BlockchainSyncService - 开始同步区块链数据...
+2025-09-25 17:33:18 [scheduling-1] INFO  c.b.service.BlockchainSyncService - 同步全局统计...
+2025-09-25 17:33:18 [scheduling-1] ERROR c.b.service.BlockchainSyncService - 同步全局统计失败
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807)
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100)
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124)
+	at io.micrometer.observation.Observation.observe(Observation.java:499)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124)
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-09-25 17:33:18 [scheduling-1] INFO  c.b.service.BlockchainSyncService - 同步用户勋章数据...
+2025-09-25 17:33:18 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:33:18 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:33:19 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:33:19 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:33:19 [scheduling-1] INFO  c.b.service.BlockchainSyncService - 用户勋章数据同步完成，共同步 1 个用户
+2025-09-25 17:33:19 [scheduling-1] INFO  c.b.service.BlockchainSyncService - 区块链数据同步完成
+2025-09-25 17:33:29 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:33:29 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-09-25 17:33:29 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-09-25 17:36:08 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 25308 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:36:08 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:36:08 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:36:08 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-25 17:36:08 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-25 17:36:10 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:36:10 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 113 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:36:11 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:36:11 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:36:11 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:36:11 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:36:11 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3281 ms
+2025-09-25 17:36:12 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:36:12 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.3.1.Final
+2025-09-25 17:36:12 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:36:12 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:36:12 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-09-25 17:36:13 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2718b457
+2025-09-25 17:36:13 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-09-25 17:36:13 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:36:13 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:36:15 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:36:15 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:36:15 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-25 17:36:18 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:36:18 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14383
+2025-09-25 17:36:18 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:36:18 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:36:18 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:36:18 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:36:18 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:36:18 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:36:18 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:36:18 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:36:18 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:36:18 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:36:19 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:36:19 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:36:19 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:36:19 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:36:19 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:36:19 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:36:19 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 12.125 seconds (process running for 13.396)
+2025-09-25 17:36:19 [scheduling-1] INFO  c.b.service.BlockchainSyncService - 开始同步区块链数据...
+2025-09-25 17:36:19 [scheduling-1] INFO  c.b.service.BlockchainSyncService - 同步全局统计...
+2025-09-25 17:36:20 [scheduling-1] ERROR c.b.service.BlockchainSyncService - 同步全局统计失败
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807)
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100)
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124)
+	at io.micrometer.observation.Observation.observe(Observation.java:499)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124)
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-09-25 17:36:20 [scheduling-1] INFO  c.b.service.BlockchainSyncService - 同步用户勋章数据...
+2025-09-25 17:36:20 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:36:20 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:36:20 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:36:20 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:36:20 [scheduling-1] INFO  c.b.service.BlockchainSyncService - 用户勋章数据同步完成，共同步 1 个用户
+2025-09-25 17:36:20 [scheduling-1] INFO  c.b.service.BlockchainSyncService - 区块链数据同步完成
+2025-09-25 17:40:06 [http-nio-5000-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-09-25 17:40:06 [http-nio-5000-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-09-25 17:40:06 [http-nio-5000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected StandardServletMultipartResolver
+2025-09-25 17:40:06 [http-nio-5000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected AcceptHeaderLocaleResolver
+2025-09-25 17:40:06 [http-nio-5000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected FixedThemeResolver
+2025-09-25 17:40:06 [http-nio-5000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator@3ad522c
+2025-09-25 17:40:06 [http-nio-5000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Detected org.springframework.web.servlet.support.SessionFlashMapManager@585c617e
+2025-09-25 17:40:06 [http-nio-5000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - enableLoggingRequestDetails='false': request parameters and headers will be masked to prevent unsafe logging of potentially sensitive data
+2025-09-25 17:40:06 [http-nio-5000-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 8 ms
+2025-09-25 17:40:06 [http-nio-5000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/health", parameters={}
+2025-09-25 17:40:06 [http-nio-5000-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.SystemController#healthCheck()
+2025-09-25 17:40:06 [http-nio-5000-exec-1] INFO  c.b.controller.SystemController - 系统健康检查: 服务正常运行
+2025-09-25 17:40:06 [http-nio-5000-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
+2025-09-25 17:40:06 [http-nio-5000-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{api_endpoints={proof_list=/api/proof/list, nft_mint=/api/nft/mint, nft_upload=/api/nft/upload, proo (truncated)...]
+2025-09-25 17:40:06 [http-nio-5000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-09-25 17:48:16 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:48:16 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:48:16 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:48:16 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-09-25 17:48:16 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-09-25 17:48:18 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:48:18 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 165 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:48:19 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:48:19 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:48:19 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:48:20 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:48:20 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3192 ms
+2025-09-25 17:48:20 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:48:20 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.3.1.Final
+2025-09-25 17:48:20 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:48:20 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:48:21 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-09-25 17:48:21 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@103cd91
+2025-09-25 17:48:21 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-09-25 17:48:21 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:48:21 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:48:22 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:48:23 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:48:23 [restartedMain] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-09-25 17:48:25 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:48:25 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14384
+2025-09-25 17:48:26 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:48:26 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:48:26 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:48:26 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:48:26 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:48:26 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:48:26 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:48:26 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:48:26 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:48:26 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:48:26 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:48:26 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:48:26 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:48:26 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:48:27 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:48:27 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:48:27 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 11.259 seconds (process running for 12.454)
+2025-09-25 17:48:27 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:48:27 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:48:27 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807)
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100)
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124)
+	at io.micrometer.observation.Observation.observe(Observation.java:499)
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124)
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358)
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-09-25 17:48:27 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:48:27 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:48:28 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:48:28 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:48:28 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:48:28 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:48:28 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:49:09 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 18 class path changes (0 additions, 0 deletions, 18 modifications)
+2025-09-25 17:49:09 [Thread-7] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:09 [Thread-7] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-09-25 17:49:09 [Thread-7] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-09-25 17:49:09 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:49:09 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:49:09 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:49:10 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:49:10 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 57 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:49:10 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:49:10 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:49:10 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:49:10 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:49:10 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1035 ms
+2025-09-25 17:49:10 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:49:10 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:49:10 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:49:10 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2025-09-25 17:49:10 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@24c00b0e
+2025-09-25 17:49:10 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2025-09-25 17:49:10 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:49:10 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:49:11 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:49:11 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:11 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:49:12 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14385
+2025-09-25 17:49:12 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:49:12 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:49:12 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:49:12 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:49:12 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:49:12 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:49:12 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:49:12 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:49:12 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:49:12 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:49:12 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:49:12 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:49:12 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:49:12 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:49:13 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:49:13 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:49:13 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 3.599 seconds (process running for 58.415)
+2025-09-25 17:49:13 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:49:13 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:49:13 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:49:13 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:49:13 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:49:13 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:49:13 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:49:13 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:49:13 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:49:13 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:49:13 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:49:16 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 18 class path changes (0 additions, 0 deletions, 18 modifications)
+2025-09-25 17:49:16 [Thread-9] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:16 [Thread-9] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2025-09-25 17:49:16 [Thread-9] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+2025-09-25 17:49:16 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:49:16 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:49:16 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:49:17 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:49:17 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 27 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:49:17 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:49:17 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:49:17 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:49:17 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:49:17 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 727 ms
+2025-09-25 17:49:17 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:49:17 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:49:17 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:49:17 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Starting...
+2025-09-25 17:49:17 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-3 - Added connection com.mysql.cj.jdbc.ConnectionImpl@124ac245
+2025-09-25 17:49:17 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Start completed.
+2025-09-25 17:49:17 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:49:17 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:49:18 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:49:18 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:18 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:49:19 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14386
+2025-09-25 17:49:19 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:49:19 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:49:19 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:49:19 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:49:19 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:49:19 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:49:19 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:49:19 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:49:19 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:49:19 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:49:19 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:49:19 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:49:19 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:49:19 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:49:19 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:49:19 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:49:19 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 3.073 seconds (process running for 65.133)
+2025-09-25 17:49:19 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:49:19 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:49:19 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:49:20 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:49:20 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:49:20 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:49:20 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:49:20 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:49:20 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:49:20 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:49:20 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:49:23 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 18 class path changes (0 additions, 0 deletions, 18 modifications)
+2025-09-25 17:49:23 [Thread-14] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:23 [Thread-14] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
+2025-09-25 17:49:23 [Thread-14] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.
+2025-09-25 17:49:23 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:49:23 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:49:23 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:49:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:49:23 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 38 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:49:24 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:49:24 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:49:24 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:49:24 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:49:24 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 759 ms
+2025-09-25 17:49:24 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:49:24 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:49:24 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:49:24 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Starting...
+2025-09-25 17:49:24 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-4 - Added connection com.mysql.cj.jdbc.ConnectionImpl@643be6b1
+2025-09-25 17:49:24 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Start completed.
+2025-09-25 17:49:24 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:49:24 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:49:24 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:49:24 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:25 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:49:25 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14387
+2025-09-25 17:49:25 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:49:25 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:49:25 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:49:25 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:49:25 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:49:25 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:49:25 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:49:25 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:49:25 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:49:25 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:49:25 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:49:26 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:49:26 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:49:26 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:49:26 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:49:26 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:49:26 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 2.739 seconds (process running for 71.476)
+2025-09-25 17:49:26 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:49:26 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:49:26 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:49:26 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:49:26 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:49:26 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:49:26 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:49:26 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:49:26 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:49:26 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:49:26 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:49:36 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 18 class path changes (0 additions, 0 deletions, 18 modifications)
+2025-09-25 17:49:36 [Thread-19] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:36 [Thread-19] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Shutdown initiated...
+2025-09-25 17:49:36 [Thread-19] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Shutdown completed.
+2025-09-25 17:49:37 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:49:37 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:49:37 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:49:37 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:49:37 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 26 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:49:37 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:49:37 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:49:37 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:49:37 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:49:37 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 646 ms
+2025-09-25 17:49:37 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:49:37 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:49:37 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:49:37 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Starting...
+2025-09-25 17:49:37 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-5 - Added connection com.mysql.cj.jdbc.ConnectionImpl@60c491fe
+2025-09-25 17:49:37 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Start completed.
+2025-09-25 17:49:37 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:49:37 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:49:38 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:49:38 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:38 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:49:38 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14388
+2025-09-25 17:49:39 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:49:39 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:49:39 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:49:39 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:49:39 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:49:39 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:49:39 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:49:39 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:49:39 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:49:39 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:49:39 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:49:39 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:49:39 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:49:39 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:49:39 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:49:39 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:49:39 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 2.585 seconds (process running for 84.899)
+2025-09-25 17:49:39 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:49:39 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:49:39 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:49:39 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:49:39 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:49:39 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:49:39 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:49:40 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:49:40 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:49:40 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:49:40 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:49:47 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 18 class path changes (0 additions, 0 deletions, 18 modifications)
+2025-09-25 17:49:47 [Thread-24] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:47 [Thread-24] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Shutdown initiated...
+2025-09-25 17:49:47 [Thread-24] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Shutdown completed.
+2025-09-25 17:49:47 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:49:47 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:49:47 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:49:47 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:49:47 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 36 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:49:48 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:49:48 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:49:48 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:49:48 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:49:48 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 740 ms
+2025-09-25 17:49:48 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:49:48 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:49:48 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:49:48 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Starting...
+2025-09-25 17:49:48 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-6 - Added connection com.mysql.cj.jdbc.ConnectionImpl@250e0ca1
+2025-09-25 17:49:48 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Start completed.
+2025-09-25 17:49:48 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:49:48 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:49:48 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:49:48 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:49 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:49:49 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14389
+2025-09-25 17:49:49 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:49:49 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:49:49 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:49:49 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:49:49 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:49:49 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:49:49 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:49:49 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:49:49 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:49:49 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:49:49 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:49:49 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:49:49 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:49:49 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:49:50 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:49:50 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:49:50 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 2.752 seconds (process running for 95.43)
+2025-09-25 17:49:50 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:49:50 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:49:50 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:49:50 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:49:50 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:49:50 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:49:50 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:49:50 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:49:50 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:49:50 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:49:50 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:49:57 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 18 class path changes (0 additions, 0 deletions, 18 modifications)
+2025-09-25 17:49:57 [Thread-29] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:57 [Thread-29] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Shutdown initiated...
+2025-09-25 17:49:57 [Thread-29] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Shutdown completed.
+2025-09-25 17:49:57 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:49:57 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:49:57 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:49:58 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:49:58 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 34 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:49:58 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:49:58 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:49:58 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:49:58 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:49:58 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 594 ms
+2025-09-25 17:49:58 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:49:58 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:49:58 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:49:58 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Starting...
+2025-09-25 17:49:58 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-7 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1701450f
+2025-09-25 17:49:58 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Start completed.
+2025-09-25 17:49:58 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:49:58 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:49:58 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:49:58 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:49:59 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:49:59 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14390
+2025-09-25 17:50:00 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:50:00 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:50:00 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:50:00 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:50:00 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:50:00 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:50:00 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:50:00 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:50:00 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:50:00 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:50:00 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:50:00 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:50:00 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:50:00 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:50:00 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:50:00 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:50:00 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 2.63 seconds (process running for 105.804)
+2025-09-25 17:50:00 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:50:00 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:50:00 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:50:00 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:50:00 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:50:00 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:50:00 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:50:01 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:50:01 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:50:01 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:50:01 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:50:06 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 18 class path changes (0 additions, 0 deletions, 18 modifications)
+2025-09-25 17:50:06 [Thread-34] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:50:06 [Thread-34] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Shutdown initiated...
+2025-09-25 17:50:06 [Thread-34] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Shutdown completed.
+2025-09-25 17:50:06 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:50:06 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:50:06 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:50:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:50:06 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 27 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:50:06 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:50:06 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:50:06 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:50:06 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:50:06 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 649 ms
+2025-09-25 17:50:07 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:50:07 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:50:07 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:50:07 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-8 - Starting...
+2025-09-25 17:50:07 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-8 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6ff9ac1c
+2025-09-25 17:50:07 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-8 - Start completed.
+2025-09-25 17:50:07 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:50:07 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:50:07 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:50:07 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:50:07 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:50:08 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14391
+2025-09-25 17:50:08 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:50:08 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:50:08 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:50:08 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:50:08 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:50:08 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:50:08 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:50:08 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:50:08 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:50:08 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:50:08 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:50:08 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:50:08 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:50:08 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:50:08 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:50:08 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:50:08 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 2.612 seconds (process running for 114.107)
+2025-09-25 17:50:08 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:50:08 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:50:08 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:50:09 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:50:09 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:50:09 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:50:09 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:50:09 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:50:09 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:50:09 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:50:09 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:50:14 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 18 class path changes (0 additions, 0 deletions, 18 modifications)
+2025-09-25 17:50:14 [Thread-39] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:50:14 [Thread-39] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-8 - Shutdown initiated...
+2025-09-25 17:50:14 [Thread-39] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-8 - Shutdown completed.
+2025-09-25 17:50:14 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:50:14 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:50:14 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:50:14 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:50:14 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 29 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:50:15 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:50:15 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:50:15 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:50:15 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:50:15 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 662 ms
+2025-09-25 17:50:15 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:50:15 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:50:15 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:50:15 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-9 - Starting...
+2025-09-25 17:50:15 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-9 - Added connection com.mysql.cj.jdbc.ConnectionImpl@549f244c
+2025-09-25 17:50:15 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-9 - Start completed.
+2025-09-25 17:50:15 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:50:15 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:50:15 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:50:15 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:50:16 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:50:16 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14392
+2025-09-25 17:50:16 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:50:16 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:50:16 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:50:16 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:50:16 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:50:16 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:50:16 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:50:16 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:50:16 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:50:16 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:50:16 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:50:16 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:50:16 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:50:16 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:50:17 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:50:17 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:50:17 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:50:17 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 2.489 seconds (process running for 122.323)
+2025-09-25 17:50:17 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:50:17 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:50:17 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:50:17 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:50:17 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:50:17 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:50:17 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:50:17 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:50:17 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:50:17 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:50:23 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 18 class path changes (0 additions, 0 deletions, 18 modifications)
+2025-09-25 17:50:23 [Thread-44] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:50:23 [Thread-44] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-9 - Shutdown initiated...
+2025-09-25 17:50:23 [Thread-44] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-9 - Shutdown completed.
+2025-09-25 17:50:23 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:50:23 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:50:23 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:50:24 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:50:24 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 39 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:50:24 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:50:24 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:50:24 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:50:24 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:50:24 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 657 ms
+2025-09-25 17:50:24 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:50:24 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:50:24 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:50:24 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-10 - Starting...
+2025-09-25 17:50:24 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-10 - Added connection com.mysql.cj.jdbc.ConnectionImpl@37cb2e53
+2025-09-25 17:50:24 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-10 - Start completed.
+2025-09-25 17:50:24 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:50:24 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:50:24 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:50:24 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:50:25 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:50:25 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14393
+2025-09-25 17:50:25 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:50:25 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:50:25 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:50:25 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:50:25 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:50:25 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:50:25 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:50:25 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:50:25 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:50:25 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:50:25 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:50:26 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:50:26 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:50:26 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:50:26 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:50:26 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:50:26 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 2.48 seconds (process running for 131.482)
+2025-09-25 17:50:26 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:50:26 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:50:26 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:50:26 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:50:26 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:50:26 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:50:26 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:50:26 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:50:26 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:50:26 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:50:26 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:50:30 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 4 class path changes (0 additions, 0 deletions, 4 modifications)
+2025-09-25 17:50:30 [Thread-49] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:50:30 [Thread-49] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-10 - Shutdown initiated...
+2025-09-25 17:50:30 [Thread-49] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-10 - Shutdown completed.
+2025-09-25 17:50:30 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:50:30 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:50:30 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:50:31 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:50:31 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 29 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:50:31 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:50:31 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:50:31 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:50:31 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:50:31 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 685 ms
+2025-09-25 17:50:31 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:50:31 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:50:31 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:50:31 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-11 - Starting...
+2025-09-25 17:50:31 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-11 - Added connection com.mysql.cj.jdbc.ConnectionImpl@188f4665
+2025-09-25 17:50:31 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-11 - Start completed.
+2025-09-25 17:50:31 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:50:31 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:50:31 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:50:31 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:50:32 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:50:32 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14394
+2025-09-25 17:50:32 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:50:32 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:50:32 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:50:32 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:50:32 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:50:32 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:50:32 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:50:32 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:50:32 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:50:32 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:50:33 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:50:33 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:50:33 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:50:33 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:50:33 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:50:33 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:50:33 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 2.363 seconds (process running for 138.527)
+2025-09-25 17:50:33 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:50:33 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:50:33 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:50:33 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:50:33 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:50:33 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:50:33 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:50:33 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:50:33 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - 同步用户 8c056ccb92c567da3fee27c23d4f2f107f203879 的勋章数据 - 金牌: 7, 银牌: 2, 铜牌: 2
+2025-09-25 17:50:33 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:50:33 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:51:02 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 4 class path changes (0 additions, 0 deletions, 4 modifications)
+2025-09-25 17:51:02 [Thread-54] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:51:02 [Thread-54] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-11 - Shutdown initiated...
+2025-09-25 17:51:02 [Thread-54] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-11 - Shutdown completed.
+2025-09-25 17:51:02 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:51:02 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:51:02 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:51:02 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:51:02 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 28 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:51:02 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:51:02 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:51:02 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:51:03 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:51:03 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 660 ms
+2025-09-25 17:51:03 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:51:03 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:51:03 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:51:03 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-12 - Starting...
+2025-09-25 17:51:03 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-12 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7f1bf0e6
+2025-09-25 17:51:03 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-12 - Start completed.
+2025-09-25 17:51:03 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:51:03 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:51:03 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:51:03 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:51:03 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:51:04 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14395
+2025-09-25 17:51:04 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:51:04 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:51:04 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:51:04 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:51:04 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:51:04 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:51:04 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:51:04 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:51:04 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:51:04 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:51:04 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:51:04 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:51:04 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:51:04 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:51:04 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:51:04 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:51:04 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 2.419 seconds (process running for 170.06)
+2025-09-25 17:51:04 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:51:04 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:51:04 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:51:05 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:51:05 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:51:05 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:51:05 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:51:05 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:51:05 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - Syncing medal data for user 8c056ccb92c567da3fee27c23d4f2f107f203879 - Gold: 7, Silver: 2, Bronze: 2
+2025-09-25 17:51:05 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:51:05 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:52:02 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 4 class path changes (0 additions, 0 deletions, 4 modifications)
+2025-09-25 17:52:02 [Thread-59] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:52:02 [Thread-59] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-12 - Shutdown initiated...
+2025-09-25 17:52:02 [Thread-59] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-12 - Shutdown completed.
+2025-09-25 17:52:02 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Starting BrokerWalletBackendApplication using Java 21.0.8 with PID 14836 (D:\brokerwallet\BrokerWallet-backend\target\classes started by wanweijie in D:\brokerwallet\BrokerWallet-backend)
+2025-09-25 17:52:02 [restartedMain] DEBUG c.b.BrokerWalletBackendApplication - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-09-25 17:52:02 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - No active profile set, falling back to 1 default profile: "default"
+2025-09-25 17:52:02 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-25 17:52:02 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 25 ms. Found 3 JPA repository interfaces.
+2025-09-25 17:52:03 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 5000 (http)
+2025-09-25 17:52:03 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-09-25 17:52:03 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-09-25 17:52:03 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-09-25 17:52:03 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 555 ms
+2025-09-25 17:52:03 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-09-25 17:52:03 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-09-25 17:52:03 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-09-25 17:52:03 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-13 - Starting...
+2025-09-25 17:52:03 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-13 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6c5fa87c
+2025-09-25 17:52:03 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-13 - Start completed.
+2025-09-25 17:52:03 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQL8Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-09-25 17:52:03 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000026: MySQL8Dialect has been deprecated; use org.hibernate.dialect.MySQLDialect instead
+2025-09-25 17:52:03 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-09-25 17:52:03 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:52:03 [restartedMain] INFO  c.b.config.BlockchainConfig - Connected to BrokerChain client: null
+2025-09-25 17:52:04 [restartedMain] INFO  c.b.config.BlockchainConfig - Current block number: 14396
+2025-09-25 17:52:04 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986137947928439588352 wei
+2025-09-25 17:52:04 [restartedMain] INFO  c.b.config.BlockchainConfig - Account balance: 8986 ETH
+2025-09-25 17:52:04 [restartedMain] INFO  c.b.service.BlockchainService - BlockchainService initialized with medal contract: 0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18
+2025-09-25 17:52:04 [restartedMain] INFO  c.b.service.BlockchainService - NFT contract: 0x382ca68b8133893fdf46170efd839c7703d9e9ae
+2025-09-25 17:52:04 [restartedMain] INFO  c.b.service.BlockchainService - Account address: 0x8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:52:04 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating file processor thread pool
+2025-09-25 17:52:04 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - File processor thread pool created - Core: 2, Max: 5, Queue: 100
+2025-09-25 17:52:04 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - Creating general async thread pool
+2025-09-25 17:52:04 [restartedMain] INFO  com.brokerwallet.config.AsyncConfig - General async thread pool created - Core: 5, Max: 10, Queue: 200
+2025-09-25 17:52:04 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-09-25 17:52:04 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - 40 mappings in 'requestMappingHandlerMapping'
+2025-09-25 17:52:04 [restartedMain] DEBUG o.s.w.s.h.SimpleUrlHandlerMapping - Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-09-25 17:52:04 [restartedMain] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerAdapter - ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-09-25 17:52:04 [restartedMain] DEBUG o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-09-25 17:52:04 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-09-25 17:52:04 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 5000 (http) with context path ''
+2025-09-25 17:52:04 [restartedMain] INFO  c.b.BrokerWalletBackendApplication - Started BrokerWalletBackendApplication in 2.144 seconds (process running for 229.949)
+2025-09-25 17:52:04 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Starting blockchain data synchronization...
+2025-09-25 17:52:04 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing global statistics...
+2025-09-25 17:52:04 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2025-09-25 17:52:04 [scheduling-1] ERROR c.b.service.BlockchainSyncService - Global statistics sync failed
+java.lang.IndexOutOfBoundsException: Index: 0
+	at java.base/java.util.Collections$EmptyList.get(Collections.java:4807) ~[na:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncGlobalStats(BlockchainSyncService.java:100) ~[classes/:na]
+	at com.brokerwallet.service.BlockchainSyncService.syncBlockchainData(BlockchainSyncService.java:52) ~[classes/:na]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at io.micrometer.observation.Observation.observe(Observation.java:499) ~[micrometer-observation-1.12.0.jar:1.12.0]
+	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.1.1.jar:6.1.1]
+	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.1.1.jar:6.1.1]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+2025-09-25 17:52:04 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Syncing user medal data...
+2025-09-25 17:52:04 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0
+2025-09-25 17:52:04 [scheduling-1] INFO  c.b.service.BlockchainService - Querying medals for address: 8c056ccb92c567da3fee27c23d4f2f107f203879
+2025-09-25 17:52:05 [scheduling-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-09-25 17:52:05 [scheduling-1] DEBUG c.b.service.BlockchainSyncService - Syncing medal data for user 8c056ccb92c567da3fee27c23d4f2f107f203879 - Gold: 7, Silver: 2, Bronze: 2
+2025-09-25 17:52:05 [scheduling-1] INFO  c.b.service.BlockchainSyncService - User medal data sync completed, synced 1 users
+2025-09-25 17:52:05 [scheduling-1] INFO  c.b.service.BlockchainSyncService - Blockchain data synchronization completed
+2025-09-25 17:52:34 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-09-25 17:52:34 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-13 - Shutdown initiated...
+2025-09-25 17:52:34 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-13 - Shutdown completed.

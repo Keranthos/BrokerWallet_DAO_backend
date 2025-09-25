@@ -318,7 +318,7 @@ public class BlockchainService {
             );
             
             String encodedFunction = FunctionEncoder.encode(mintFunction);
-            log.info("编码后的函数数据: {}", encodedFunction);
+            log.info("Encoded function data: {}", encodedFunction);
             
             // 获取nonce - 使用contract项目的方式
             BigInteger nonce;
@@ -358,10 +358,10 @@ public class BlockchainService {
             
             // 直接设置非常大的 gas limit，确保足够
             BigInteger gasLimit = BigInteger.valueOf(8000000); // 8M gas，非常保守的设置
-            log.info("=== CRITICAL: GAS LIMIT 强制设置 ===");
-            log.info("设置的 Gas Limit: {}", gasLimit);
-            log.info("Gas Limit 数值: {}", gasLimit.longValue());
-            log.info("Gas Limit 字符串: {}", gasLimit.toString());
+            log.info("=== CRITICAL: GAS LIMIT FORCED SETTING ===");
+            log.info("Set Gas Limit: {}", gasLimit);
+            log.info("Gas Limit value: {}", gasLimit.longValue());
+            log.info("Gas Limit string: {}", gasLimit.toString());
             
             // 创建交易对象 - 使用contract项目的方式
             Transaction transaction = Transaction.createFunctionCallTransaction(
@@ -374,7 +374,7 @@ public class BlockchainService {
                     encodedFunction
             );
             
-            log.info("交易详情:");
+            log.info("Transaction details:");
             log.info("From: {}", transaction.getFrom());
             log.info("To: {}", transaction.getTo());
             log.info("Nonce: {}", transaction.getNonce());
@@ -387,8 +387,8 @@ public class BlockchainService {
             EthSendTransaction ethSendTransaction = web3j.ethSendTransaction(transaction).send();
             
             if (ethSendTransaction.hasError()) {
-                log.error("交易失败: {}", ethSendTransaction.getError().getMessage());
-                log.error("错误代码: {}", ethSendTransaction.getError().getCode());
+                log.error("Transaction failed: {}", ethSendTransaction.getError().getMessage());
+                log.error("Error code: {}", ethSendTransaction.getError().getCode());
                 return NftMintResponse.builder()
                         .success(false)
                         .message("NFT铸造失败: " + ethSendTransaction.getError().getMessage())
@@ -396,7 +396,7 @@ public class BlockchainService {
             }
             
             String txHash = ethSendTransaction.getTransactionHash();
-            log.info("交易发送成功，Hash: {}", txHash);
+            log.info("Transaction sent successfully, Hash: {}", txHash);
             
             return NftMintResponse.builder()
                     .success(true)
@@ -407,10 +407,10 @@ public class BlockchainService {
                     .build();
                     
         } catch (Exception e) {
-            log.error("=== NFT铸造异常详情 ===");
-            log.error("异常类型: {}", e.getClass().getSimpleName());
-            log.error("异常消息: {}", e.getMessage());
-            log.error("堆栈跟踪:", e);
+            log.error("=== NFT Minting Exception Details ===");
+            log.error("Exception type: {}", e.getClass().getSimpleName());
+            log.error("Exception message: {}", e.getMessage());
+            log.error("Stack trace:", e);
             return NftMintResponse.builder()
                     .success(false)
                     .message("NFT铸造失败: " + e.getMessage())
@@ -507,7 +507,7 @@ public class BlockchainService {
                 paginatedNfts = nftList.subList(startIndex, endIndex);
             }
             
-            log.info("NFT分页结果: 总数={}, 页码={}, 每页大小={}, 返回数量={}", 
+            log.info("NFT pagination result: Total={}, Page={}, PageSize={}, ReturnCount={}", 
                     totalCount, page, size, paginatedNfts.size());
             
             return NftQueryResult.builder()
@@ -517,7 +517,7 @@ public class BlockchainService {
                     .build();
                     
         } catch (Exception e) {
-            log.error("查询用户NFT失败: {}", e.getMessage(), e);
+            log.error("Failed to query user NFTs: {}", e.getMessage(), e);
             return NftQueryResult.builder()
                     .address(address)
                     .nfts(new java.util.ArrayList<>())
@@ -605,7 +605,7 @@ public class BlockchainService {
                 // 这里简化处理
             }
         } catch (Exception e) {
-            log.warn("解析属性JSON失败: {}", e.getMessage());
+            log.warn("Failed to parse attributes JSON: {}", e.getMessage());
         }
         return attributesList;
     }

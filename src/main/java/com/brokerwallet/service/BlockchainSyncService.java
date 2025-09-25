@@ -45,7 +45,7 @@ public class BlockchainSyncService {
      */
     @Scheduled(fixedRate = 300000) // 5分钟 = 300000毫秒
     public void syncBlockchainData() {
-        log.info("开始同步区块链数据...");
+        log.info("Starting blockchain data synchronization...");
         
         try {
             // 同步全局统计
@@ -54,10 +54,10 @@ public class BlockchainSyncService {
             // 同步用户勋章数据
             syncUserMedals();
             
-            log.info("区块链数据同步完成");
+            log.info("Blockchain data synchronization completed");
             
         } catch (Exception e) {
-            log.error("区块链数据同步失败", e);
+            log.error("Blockchain data synchronization failed", e);
         }
     }
 
@@ -66,7 +66,7 @@ public class BlockchainSyncService {
      */
     private void syncGlobalStats() {
         try {
-            log.info("同步全局统计...");
+            log.info("Syncing global statistics...");
             
             // 构建查询函数
             Function function = new Function(
@@ -88,7 +88,7 @@ public class BlockchainSyncService {
             ).send();
             
             if (response.hasError()) {
-                log.error("查询全局统计失败: {}", response.getError().getMessage());
+                log.error("Failed to query global statistics: {}", response.getError().getMessage());
                 return;
             }
             
@@ -101,11 +101,11 @@ public class BlockchainSyncService {
             BigInteger totalSilver = (BigInteger) results.get(1).getValue();
             BigInteger totalBronze = (BigInteger) results.get(2).getValue();
             
-            log.info("全局统计同步完成 - 总金牌: {}, 总银牌: {}, 总铜牌: {}", 
+            log.info("Global statistics sync completed - Total Gold: {}, Total Silver: {}, Total Bronze: {}", 
                     totalGold, totalSilver, totalBronze);
             
         } catch (Exception e) {
-            log.error("同步全局统计失败", e);
+            log.error("Global statistics sync failed", e);
         }
     }
 
@@ -114,7 +114,7 @@ public class BlockchainSyncService {
      */
     private void syncUserMedals() {
         try {
-            log.info("同步用户勋章数据...");
+            log.info("Syncing user medal data...");
             
             // 获取所有用户账户
             List<UserAccount> users = userAccountRepository.findAll();
@@ -134,21 +134,21 @@ public class BlockchainSyncService {
                     userAccountRepository.save(user);
                     syncedCount++;
                     
-                    log.debug("同步用户 {} 的勋章数据 - 金牌: {}, 银牌: {}, 铜牌: {}", 
+                    log.debug("Syncing medal data for user {} - Gold: {}, Silver: {}, Bronze: {}", 
                             user.getWalletAddress(), 
                             medalResult.getMedals().getGold(),
                             medalResult.getMedals().getSilver(),
                             medalResult.getMedals().getBronze());
                     
                 } catch (Exception e) {
-                    log.warn("同步用户 {} 的勋章数据失败: {}", user.getWalletAddress(), e.getMessage());
+                    log.warn("Failed to sync medal data for user {}: {}", user.getWalletAddress(), e.getMessage());
                 }
             }
             
-            log.info("用户勋章数据同步完成，共同步 {} 个用户", syncedCount);
+            log.info("User medal data sync completed, synced {} users", syncedCount);
             
         } catch (Exception e) {
-            log.error("同步用户勋章数据失败", e);
+            log.error("User medal data sync failed", e);
         }
     }
 
@@ -156,7 +156,7 @@ public class BlockchainSyncService {
      * 手动触发同步
      */
     public void manualSync() {
-        log.info("手动触发区块链数据同步");
+        log.info("Manually triggering blockchain data synchronization");
         syncBlockchainData();
     }
 
@@ -165,7 +165,7 @@ public class BlockchainSyncService {
      */
     public void syncUserMedals(String walletAddress) {
         try {
-            log.info("同步用户 {} 的勋章数据", walletAddress);
+            log.info("Syncing medal data for user {}", walletAddress);
             
             // 查询链上数据
             MedalQueryResult medalResult = blockchainService.queryUserMedals(walletAddress);
@@ -180,13 +180,13 @@ public class BlockchainSyncService {
                 
                 userAccountRepository.save(user);
                 
-                log.info("用户 {} 的勋章数据同步完成", walletAddress);
+                log.info("Medal data sync completed for user {}", walletAddress);
             } else {
-                log.warn("未找到钱包地址为 {} 的用户", walletAddress);
+                log.warn("User with wallet address {} not found", walletAddress);
             }
             
         } catch (Exception e) {
-            log.error("同步用户 {} 的勋章数据失败", walletAddress, e);
+            log.error("Failed to sync medal data for user {}", walletAddress, e);
         }
     }
 }

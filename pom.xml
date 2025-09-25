@@ -135,6 +135,7 @@
                 <configuration>
                     <mainClass>com.brokerwallet.BrokerWalletBackendApplication</mainClass>
                     <excludeDevtools>false</excludeDevtools>
+                    <jvmArguments>-Dfile.encoding=UTF-8 -Dconsole.encoding=UTF-8</jvmArguments>
                 </configuration>
                 <executions>
                     <execution>
