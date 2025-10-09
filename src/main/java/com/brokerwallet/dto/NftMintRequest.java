@@ -19,20 +19,18 @@ public class NftMintRequest {
     /**
      * NFT接收者地址
      */
-    @NotBlank(message = "接收者地址不能为空")
-    @Pattern(regexp = "^0x[a-fA-F0-9]{40}$", message = "无效的以太坊地址格式")
+    @NotBlank(message = "Recipient address cannot be empty")
     private String ownerAddress;
     
     /**
      * NFT名称
      */
-    @NotBlank(message = "NFT名称不能为空")
+    @NotBlank(message = "NFT name cannot be empty")
     private String name;
     
     /**
      * NFT描述
      */
-    @NotBlank(message = "NFT描述不能为空")
     private String description;
     
     /**

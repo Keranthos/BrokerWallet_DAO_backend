@@ -22,7 +22,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/test-data")
-@CrossOrigin(origins = "*")
+// @CrossOrigin 已在 WebConfig 中统一配置，此处删除避免冲突
 public class TestDataController {
     
     private static final Logger logger = LoggerFactory.getLogger(TestDataController.class);

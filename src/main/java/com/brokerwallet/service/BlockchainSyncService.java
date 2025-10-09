@@ -4,6 +4,8 @@ import com.brokerwallet.dto.MedalQueryResult;
 import com.brokerwallet.entity.UserAccount;
 import com.brokerwallet.repository.UserAccountRepository;
 
+import java.time.LocalDateTime;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,9 +43,10 @@ public class BlockchainSyncService {
     private String medalContractAddress;
 
     /**
-     * 每5分钟同步一次区块链数据
+     * 自动同步已禁用，改为按需查询
+     * 当用户访问时才查询区块链数据
      */
-    @Scheduled(fixedRate = 300000) // 5分钟 = 300000毫秒
+    // @Scheduled(fixedRate = 300000) // 已禁用自动同步
     public void syncBlockchainData() {
         log.info("Starting blockchain data synchronization...");
         
@@ -131,17 +134,23 @@ public class BlockchainSyncService {
                     user.setBronzeMedals(medalResult.getMedals().getBronze());
                     user.setTotalMedals(medalResult.getMedals().getTotal());
                     
+                    // 同时更新区块链同步勋章信息
+                    user.setBlockchainGoldMedals(medalResult.getMedals().getGold());
+                    user.setBlockchainSilverMedals(medalResult.getMedals().getSilver());
+                    user.setBlockchainBronzeMedals(medalResult.getMedals().getBronze());
+                    user.setBlockchainSyncTime(LocalDateTime.now());
+                    
                     userAccountRepository.save(user);
                     syncedCount++;
                     
-                    log.debug("Syncing medal data for user {} - Gold: {}, Silver: {}, Bronze: {}", 
+                    log.debug("Syncing user {} medal data - Gold: {}, Silver: {}, Bronze: {}", 
                             user.getWalletAddress(), 
                             medalResult.getMedals().getGold(),
                             medalResult.getMedals().getSilver(),
                             medalResult.getMedals().getBronze());
                     
                 } catch (Exception e) {
-                    log.warn("Failed to sync medal data for user {}: {}", user.getWalletAddress(), e.getMessage());
+                    log.warn("Failed to sync user {} medal data: {}", user.getWalletAddress(), e.getMessage());
                 }
             }
             
@@ -182,7 +191,7 @@ public class BlockchainSyncService {
                 
                 log.info("Medal data sync completed for user {}", walletAddress);
             } else {
-                log.warn("User with wallet address {} not found", walletAddress);
+                log.warn("User not found with wallet address {}", walletAddress);
             }
             
         } catch (Exception e) {

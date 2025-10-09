@@ -65,6 +65,11 @@ public class NftQueryResult {
         private String ownerAddress;
         
         /**
+         * 所有者花名
+         */
+        private String ownerDisplayName;
+        
+        /**
          * NFT名称
          */
         private String name;
@@ -80,9 +85,19 @@ public class NftQueryResult {
         private String imageUrl;
         
         /**
-         * 属性列表
+         * 属性JSON字符串
          */
-        private List<Object> attributes;
+        private String attributes;
+        
+        /**
+         * 铸造时间（格式化后的字符串）
+         */
+        private String mintTime;
+        
+        /**
+         * 铸造者地址
+         */
+        private String minter;
     }
     
     /**
@@ -110,9 +125,19 @@ public class NftQueryResult {
         private String image;
         
         /**
-         * 属性列表
+         * 属性JSON字符串
          */
-        private List<Object> attributes;
+        private String attributes;
+        
+        /**
+         * 铸造时间（格式化后的字符串）
+         */
+        private String mintTime;
+        
+        /**
+         * 铸造者地址
+         */
+        private String minter;
     }
 }
 

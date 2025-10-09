@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")
+// @CrossOrigin 已在 WebConfig 中统一配置，此处删除避免冲突
 public class SystemController {
     
     private static final Logger logger = LoggerFactory.getLogger(SystemController.class);

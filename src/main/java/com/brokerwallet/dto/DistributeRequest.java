@@ -11,16 +11,16 @@ import jakarta.validation.constraints.Min;
 @Data
 public class DistributeRequest {
     
-    @NotBlank(message = "目标地址不能为空")
-    @Pattern(regexp = "^0x[a-fA-F0-9]{40}$", message = "无效的以太坊地址")
+    @NotBlank(message = "Target address cannot be empty")
+    @Pattern(regexp = "^0x[a-fA-F0-9]{40}$", message = "Invalid Ethereum address")
     private String to;
     
-    @Min(value = 0, message = "金牌数量不能为负数")
+    @Min(value = 0, message = "Gold quantity cannot be negative")
     private int goldQty = 0;
     
-    @Min(value = 0, message = "银牌数量不能为负数")
+    @Min(value = 0, message = "Silver quantity cannot be negative")
     private int silverQty = 0;
     
-    @Min(value = 0, message = "铜牌数量不能为负数")
+    @Min(value = 0, message = "Bronze quantity cannot be negative")
     private int bronzeQty = 0;
 }

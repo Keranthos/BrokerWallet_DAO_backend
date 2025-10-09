@@ -88,9 +88,15 @@ public interface UserAccountRepository extends JpaRepository<UserAccount, Long> 
     // ===== 新增优化查询方法 =====
     
     /**
-     * 获取勋章排行榜（分页，使用计算列排序）
+     * 获取勋章排行榜（分页，使用计算列排序，只显示有勋章的用户）
+     * 排序规则：
+     * 1. 总分（金×3 + 银×2 + 铜×1）降序
+     * 2. 金牌数降序
+     * 3. 银牌数降序
+     * 4. 铜牌数降序（新增，确保完全相同时有稳定排序）
+     * 5. 创建时间升序（先注册的用户排前面）
      */
-    @Query("SELECT u FROM UserAccount u ORDER BY (u.goldMedals * 3 + u.silverMedals * 2 + u.bronzeMedals) DESC, u.goldMedals DESC, u.silverMedals DESC")
+    @Query("SELECT u FROM UserAccount u WHERE (u.goldMedals > 0 OR u.silverMedals > 0 OR u.bronzeMedals > 0) ORDER BY (u.goldMedals * 3 + u.silverMedals * 2 + u.bronzeMedals) DESC, u.goldMedals DESC, u.silverMedals DESC, u.bronzeMedals DESC, u.createTime ASC")
     Page<UserAccount> findAllByOrderByTotalMedalScoreDescGoldMedalsDescSilverMedalsDesc(Pageable pageable);
     
     /**

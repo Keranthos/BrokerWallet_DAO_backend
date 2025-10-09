@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/test")
-@CrossOrigin(origins = "*")
+// @CrossOrigin 已在 WebConfig 中统一配置，此处删除避免冲突
 public class QuickTestController {
     
     /**

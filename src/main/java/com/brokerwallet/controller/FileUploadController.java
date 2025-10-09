@@ -28,7 +28,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/upload")
-@CrossOrigin(origins = "*")
+// @CrossOrigin 已在 WebConfig 中统一配置，此处删除避免冲突
 public class FileUploadController {
     
     private static final Logger logger = LoggerFactory.getLogger(FileUploadController.class);
@@ -52,9 +52,9 @@ public class FileUploadController {
     public ResponseEntity<Map<String, Object>> testConnection() {
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
-        response.put("message", "后端连接成功！");
+        response.put("message", "Backend connection successful!");
         response.put("timestamp", java.time.LocalDateTime.now().toString());
-        logger.info("收到连接测试请求");
+        logger.info("Received connection test request");
         return ResponseEntity.ok(response);
     }
     
@@ -306,13 +306,37 @@ public class FileUploadController {
         try {
             logger.info("获取用户提交历史: {}, page={}, size={}", walletAddress, page, size);
             
-            // 查找用户
-            UserAccount user = userAccountService.findByWalletAddress(walletAddress);
-            if (user == null) {
-                response.put("success", false);
-                response.put("message", "用户不存在");
-                return ResponseEntity.status(404).body(response);
+            // 规范化钱包地址（尝试多种格式）
+            UserAccount user = null;
+            
+            // 1. 先尝试原始地址
+            user = userAccountService.findByWalletAddress(walletAddress);
+            
+            // 2. 如果失败，尝试添加0x前缀
+            if (user == null && !walletAddress.startsWith("0x")) {
+                user = userAccountService.findByWalletAddress("0x" + walletAddress);
             }
+            
+            // 3. 如果失败，尝试去掉0x前缀
+            if (user == null && walletAddress.startsWith("0x")) {
+                user = userAccountService.findByWalletAddress(walletAddress.substring(2));
+            }
+            
+            if (user == null) {
+                logger.info("用户不存在，返回空提交历史: {}", walletAddress);
+                // 返回空数组而不是404错误，让手机端显示"暂无提交历史"
+                response.put("success", true);
+                response.put("data", new ArrayList<>());
+                response.put("pagination", Map.of(
+                    "currentPage", page,
+                    "pageSize", size,
+                    "totalItems", 0,
+                    "totalPages", 0
+                ));
+                return ResponseEntity.ok(response);
+            }
+            
+            logger.info("找到用户: {}, displayName={}", user.getWalletAddress(), user.getDisplayName());
             
             // 获取用户的所有证明文件（按时间倒序）
             List<ProofFile> allProofFiles = proofFileRepository.findByUserAccountIdOrderByUploadTimeDesc(user.getId());
@@ -341,9 +365,15 @@ public class FileUploadController {
                     submission.put("auditTime", proofFile.getAuditTime().toString());
                 }
                 
-                // 勋章信息
-                submission.put("medalAwarded", proofFile.getMedalAwarded().name());
-                submission.put("medalAwardedDesc", getMedalDescription(proofFile.getMedalAwarded()));
+                // 勋章信息（处理null值）
+                ProofFile.MedalType medalAwarded = proofFile.getMedalAwarded();
+                if (medalAwarded != null) {
+                    submission.put("medalAwarded", medalAwarded.name());
+                    submission.put("medalAwardedDesc", getMedalDescription(medalAwarded));
+                } else {
+                    submission.put("medalAwarded", "NONE");
+                    submission.put("medalAwardedDesc", "无");
+                }
                 if (proofFile.getMedalAwardTime() != null) {
                     submission.put("medalAwardTime", proofFile.getMedalAwardTime().toString());
                 }

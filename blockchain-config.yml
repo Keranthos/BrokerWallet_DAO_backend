@@ -4,7 +4,7 @@
 # BrokerChain 区块链节点配置
 blockchain:
   # 节点RPC地址 (经常需要修改的端口)
-  rpc-url: "http://127.0.0.1:55883"
+  rpc-url: "http://127.0.0.1:30783"
   
   # 账户地址 (用于发送交易的钱包地址)
   account-address: "0x8c056ccb92c567da3fee27c23d4f2f107f203879"
@@ -13,14 +13,14 @@ blockchain:
   contracts:
     # 勋章系统合约地址
     medal-contract: "0x1a202bfa10ea97a742ad22fcb1a7913821bf1b18"
-    # NFT铸造合约地址  
-    nft-contract: "0x382ca68b8133893fdf46170efd839c7703d9e9ae"
+    # NFT铸造合约地址 (OptimizedNftMinter - 优化版，支持图片路径存储)
+    nft-contract: "0x1bd997AE79DF9453b75b7b8D016a652a9c62E980"
 
-# 连接超时配置
+# 连接超时配置 (大幅增加以支持大图片NFT铸造)
 timeout:
-  connect: 30    # 连接超时(秒)
-  read: 120      # 读取超时(秒)
-  write: 30      # 写入超时(秒)
+  connect: 60     # 连接超时(秒) - 增加到60秒
+  read: 600       # 读取超时(秒) - 增加到10分钟 (600秒)
+  write: 600      # 写入超时(秒) - 增加到10分钟 (600秒)
 
 # 日志配置
 logging:

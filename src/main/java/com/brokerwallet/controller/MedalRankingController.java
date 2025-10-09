@@ -2,6 +2,7 @@ package com.brokerwallet.controller;
 
 import com.brokerwallet.entity.UserAccount;
 import com.brokerwallet.service.UserAccountService;
+import com.brokerwallet.service.BlockchainSyncService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,16 @@ import java.util.stream.Collectors;
  */
 @RestController
 @RequestMapping("/api/medal")
-@CrossOrigin(origins = "*")
+// @CrossOrigin 已在 WebConfig 中统一配置，此处删除避免冲突
 public class MedalRankingController {
 
     private static final Logger logger = LoggerFactory.getLogger(MedalRankingController.class);
 
     @Autowired
     private UserAccountService userAccountService;
+    
+    @Autowired
+    private BlockchainSyncService blockchainSyncService;
 
     /**
      * 获取勋章排行榜
@@ -37,13 +41,16 @@ public class MedalRankingController {
      * @return 排行榜数据
      */
     @GetMapping("/ranking")
-    @Cacheable(value = "medal-ranking", key = "#page + '-' + #size")
+    // 移除缓存，因为数据需要实时同步
     public ResponseEntity<?> getMedalRanking(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         
         try {
-            logger.info("获取勋章排行榜: page={}, size={}", page, size);
+            logger.info("Getting medal ranking: page={}, size={}", page, size);
+            
+            // 按需同步所有用户数据
+            blockchainSyncService.syncBlockchainData();
             
             Pageable pageable = PageRequest.of(page, size);
             Page<UserAccount> rankingPage = userAccountService.getMedalRanking(pageable);
@@ -97,7 +104,7 @@ public class MedalRankingController {
             response.put("success", true);
             response.put("data", Map.of(
                 "walletAddress", user.getWalletAddress(),
-                "displayName", user.getDisplayName() != null ? user.getDisplayName() : "匿名用户",
+                "displayName", user.getDisplayName() != null ? user.getDisplayName() : "Anonymous User",
                 "goldMedals", user.getGoldMedals(),
                 "silverMedals", user.getSilverMedals(),
                 "bronzeMedals", user.getBronzeMedals(),
@@ -149,7 +156,7 @@ public class MedalRankingController {
     private Map<String, Object> convertToRankingItem(UserAccount user) {
         Map<String, Object> item = new HashMap<>();
         item.put("walletAddress", user.getWalletAddress());
-        item.put("displayName", user.getDisplayName() != null ? user.getDisplayName() : "匿名用户");
+        item.put("displayName", user.getDisplayName() != null ? user.getDisplayName() : "Anonymous User");
         item.put("goldMedals", user.getGoldMedals());
         item.put("silverMedals", user.getSilverMedals());
         item.put("bronzeMedals", user.getBronzeMedals());
@@ -158,9 +165,17 @@ public class MedalRankingController {
         // 只有在用户和管理员都同意的情况下才显示代表作
         if (user.canShowRepresentativeWork()) {
             item.put("representativeWork", user.getRepresentativeWork());
+            item.put("showRepresentativeWork", true);
         } else {
             item.put("representativeWork", null);
+            item.put("showRepresentativeWork", false);
         }
+        
+        logger.debug("用户 {} 代表作展示: showRepresentativeWork={}, adminApprovedDisplay={}, representativeWork={}", 
+                user.getWalletAddress(), 
+                user.getShowRepresentativeWork(),
+                user.getAdminApprovedDisplay(),
+                user.getRepresentativeWork() != null ? "有" : "无");
         
         return item;
     }

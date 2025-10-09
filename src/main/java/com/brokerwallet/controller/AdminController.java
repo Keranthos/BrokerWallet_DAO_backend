@@ -5,6 +5,10 @@ import com.brokerwallet.entity.UserAccount;
 import com.brokerwallet.repository.ProofFileRepository;
 import com.brokerwallet.repository.UserAccountRepository;
 import com.brokerwallet.service.UserAccountService;
+import com.brokerwallet.service.BlockchainService;
+import com.brokerwallet.service.BlockchainSyncService;
+import com.brokerwallet.dto.DistributeRequest;
+import com.brokerwallet.dto.DistributeResponse;
 import com.brokerwallet.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +41,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = "*")
+// @CrossOrigin 已在 WebConfig 中统一配置，此处删除避免冲突
 public class AdminController {
     
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
@@ -50,6 +54,12 @@ public class AdminController {
     
     @Autowired
     private UserAccountService userAccountService;
+    
+    @Autowired
+    private BlockchainService blockchainService;
+    
+    @Autowired
+    private BlockchainSyncService blockchainSyncService;
     
     @Autowired
     private com.brokerwallet.repository.NftImageRepository nftImageRepository;
@@ -119,6 +129,139 @@ public class AdminController {
     }
     
     /**
+     * 获取已审核的文件列表
+     */
+    @GetMapping("/approved-users")
+    public ResponseEntity<Map<String, Object>> getApprovedUsers(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit) {
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            logger.info("获取已审核文件列表: page={}, limit={}", page, limit);
+            
+            // 创建分页对象（注意：Spring Data JPA的页码从0开始）
+            Pageable pageable = PageRequest.of(page - 1, limit, 
+                Sort.by(Sort.Direction.DESC, "auditTime"));
+            
+            // 查询已审核的证明文件
+            Page<ProofFile> proofFilePage = proofFileRepository.findByAuditStatus(
+                ProofFile.AuditStatus.APPROVED, pageable);
+            
+            List<Map<String, Object>> users = new ArrayList<>();
+            
+            for (ProofFile proofFile : proofFilePage.getContent()) {
+                // 获取用户信息
+                UserAccount user = userAccountService.findById(proofFile.getUserAccountId());
+                if (user == null) continue;
+                
+                Map<String, Object> userInfo = new HashMap<>();
+                userInfo.put("id", proofFile.getId());
+                userInfo.put("username", user.getDisplayName() != null ? user.getDisplayName() : user.getWalletAddress());
+                userInfo.put("email", user.getWalletAddress());
+                userInfo.put("walletAddress", user.getWalletAddress());
+                userInfo.put("originalFilename", proofFile.getOriginalName());
+                userInfo.put("fileName", proofFile.getFileName());
+                userInfo.put("fileSize", proofFile.getFileSize());
+                userInfo.put("uploadTime", proofFile.getUploadTime().toString());
+                userInfo.put("auditStatus", proofFile.getAuditStatus().getDescription());
+                userInfo.put("auditTime", proofFile.getAuditTime() != null ? proofFile.getAuditTime().toString() : null);
+                userInfo.put("medalAwarded", proofFile.getMedalAwarded() != null ? proofFile.getMedalAwarded().name() : null);
+                userInfo.put("objectKey", proofFile.getFileName());
+                userInfo.put("filePath", proofFile.getFilePath());
+                userInfo.put("userAccountId", proofFile.getUserAccountId());
+                
+                users.add(userInfo);
+            }
+            
+            response.put("code", 1);
+            response.put("success", true);
+            response.put("message", "获取成功");
+            response.put("users", users);
+            response.put("total", proofFilePage.getTotalElements());
+            response.put("currentPage", page);
+            response.put("totalPages", proofFilePage.getTotalPages());
+            
+            logger.info("成功获取{}条已审核文件", users.size());
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("获取已审核文件列表失败", e);
+            response.put("code", 0);
+            response.put("success", false);
+            response.put("message", "获取失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 获取所有文件列表（待审核+已审核+已拒绝）
+     */
+    @GetMapping("/all-users")
+    public ResponseEntity<Map<String, Object>> getAllUsers(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int limit) {
+        
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            logger.info("获取所有文件列表: page={}, limit={}", page, limit);
+            
+            // 创建分页对象
+            Pageable pageable = PageRequest.of(page - 1, limit, 
+                Sort.by(Sort.Direction.DESC, "uploadTime"));
+            
+            // 查询所有证明文件
+            Page<ProofFile> proofFilePage = proofFileRepository.findAll(pageable);
+            
+            List<Map<String, Object>> users = new ArrayList<>();
+            
+            for (ProofFile proofFile : proofFilePage.getContent()) {
+                // 获取用户信息
+                UserAccount user = userAccountService.findById(proofFile.getUserAccountId());
+                if (user == null) continue;
+                
+                Map<String, Object> userInfo = new HashMap<>();
+                userInfo.put("id", proofFile.getId());
+                userInfo.put("username", user.getDisplayName() != null ? user.getDisplayName() : user.getWalletAddress());
+                userInfo.put("email", user.getWalletAddress());
+                userInfo.put("walletAddress", user.getWalletAddress());
+                userInfo.put("originalFilename", proofFile.getOriginalName());
+                userInfo.put("fileName", proofFile.getFileName());
+                userInfo.put("fileSize", proofFile.getFileSize());
+                userInfo.put("uploadTime", proofFile.getUploadTime().toString());
+                userInfo.put("auditStatus", proofFile.getAuditStatus().getDescription());
+                userInfo.put("auditTime", proofFile.getAuditTime() != null ? proofFile.getAuditTime().toString() : null);
+                userInfo.put("medalAwarded", proofFile.getMedalAwarded() != null ? proofFile.getMedalAwarded().name() : null);
+                userInfo.put("objectKey", proofFile.getFileName());
+                userInfo.put("filePath", proofFile.getFilePath());
+                userInfo.put("userAccountId", proofFile.getUserAccountId());
+                
+                users.add(userInfo);
+            }
+            
+            response.put("code", 1);
+            response.put("success", true);
+            response.put("message", "获取成功");
+            response.put("users", users);
+            response.put("total", proofFilePage.getTotalElements());
+            response.put("currentPage", page);
+            response.put("totalPages", proofFilePage.getTotalPages());
+            
+            logger.info("成功获取{}条文件", users.size());
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("获取文件列表失败", e);
+            response.put("code", 0);
+            response.put("success", false);
+            response.put("message", "获取失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
      * 审核文件并分配勋章
      */
     @PostMapping("/review")
@@ -131,9 +274,11 @@ public class AdminController {
             Integer goldNum = (Integer) request.get("firstnum");
             Integer silverNum = (Integer) request.get("secondnum");
             Integer bronzeNum = (Integer) request.get("thirdnum");
+            Long proofFileId = request.get("proofFileId") != null ? 
+                Long.valueOf(request.get("proofFileId").toString()) : null;
             
-            logger.info("审核用户: username={}, approve={}, gold={}, silver={}, bronze={}", 
-                username, approve, goldNum, silverNum, bronzeNum);
+            logger.info("审核用户: username={}, approve={}, gold={}, silver={}, bronze={}, proofFileId={}", 
+                username, approve, goldNum, silverNum, bronzeNum, proofFileId);
             
             if (username == null || approve == null) {
                 response.put("success", false);
@@ -165,25 +310,89 @@ public class AdminController {
                 user.setUpdateTime(LocalDateTime.now());
                 userAccountService.save(user);
                 
-                // 更新相关证明文件的审核状态
-                List<ProofFile> userProofFiles = proofFileRepository.findByUserAccountIdAndAuditStatus(
-                    user.getId(), ProofFile.AuditStatus.PENDING);
-                
-                for (ProofFile proofFile : userProofFiles) {
-                    proofFile.setAuditStatus(ProofFile.AuditStatus.APPROVED);
-                    proofFile.setAuditTime(LocalDateTime.now());
+                // 调用区块链发放勋章
+                try {
+                    logger.info("开始向区块链发放勋章: 用户={}, 金牌={}, 银牌={}, 铜牌={}", 
+                        user.getWalletAddress(), goldNum, silverNum, bronzeNum);
                     
-                    // 设置主要勋章类型（选择数量最多的）
-                    if (goldNum != null && goldNum > 0) {
-                        proofFile.setMedalAwarded(ProofFile.MedalType.GOLD);
-                    } else if (silverNum != null && silverNum > 0) {
-                        proofFile.setMedalAwarded(ProofFile.MedalType.SILVER);
-                    } else if (bronzeNum != null && bronzeNum > 0) {
-                        proofFile.setMedalAwarded(ProofFile.MedalType.BRONZE);
+                    DistributeRequest distributeRequest = new DistributeRequest();
+                    distributeRequest.setTo(user.getWalletAddress());
+                    distributeRequest.setGoldQty(goldNum != null ? goldNum : 0);
+                    distributeRequest.setSilverQty(silverNum != null ? silverNum : 0);
+                    distributeRequest.setBronzeQty(bronzeNum != null ? bronzeNum : 0);
+                    
+                    DistributeResponse distributeResponse = blockchainService.distributeMedalsWithWalletSigning(distributeRequest);
+                    
+                    if (distributeResponse.isSuccess()) {
+                        logger.info("区块链勋章发放成功: txHash={}", distributeResponse.getTransactionHash());
+                        
+                        // 同步区块链数据回数据库
+                        try {
+                            blockchainSyncService.syncUserMedals(user.getWalletAddress());
+                            logger.info("区块链数据同步成功");
+                        } catch (Exception syncEx) {
+                            logger.error("区块链数据同步失败: {}", syncEx.getMessage());
+                        }
+                    } else {
+                        logger.error("区块链勋章发放失败: {}", distributeResponse.getMessage());
                     }
+                } catch (Exception blockchainEx) {
+                    logger.error("区块链操作失败: {}", blockchainEx.getMessage(), blockchainEx);
+                    // 区块链操作失败不影响审核流程，只记录日志
+                }
+                
+                // 更新相关证明文件的审核状态
+                if (proofFileId != null) {
+                    // 审核特定文件
+                    Optional<ProofFile> proofFileOpt = proofFileRepository.findById(proofFileId);
+                    if (proofFileOpt.isPresent()) {
+                        ProofFile proofFile = proofFileOpt.get();
+                        if (proofFile.getUserAccountId().equals(user.getId()) && 
+                            proofFile.getAuditStatus() == ProofFile.AuditStatus.PENDING) {
+                            
+                            proofFile.setAuditStatus(ProofFile.AuditStatus.APPROVED);
+                            proofFile.setAuditTime(LocalDateTime.now());
+                            
+                            // 设置主要勋章类型（选择数量最多的）
+                            if (goldNum != null && goldNum > 0) {
+                                proofFile.setMedalAwarded(ProofFile.MedalType.GOLD);
+                            } else if (silverNum != null && silverNum > 0) {
+                                proofFile.setMedalAwarded(ProofFile.MedalType.SILVER);
+                            } else if (bronzeNum != null && bronzeNum > 0) {
+                                proofFile.setMedalAwarded(ProofFile.MedalType.BRONZE);
+                            }
+                            
+                            proofFile.setMedalAwardTime(LocalDateTime.now());
+                            proofFileRepository.save(proofFile);
+                            
+                            logger.info("审核通过: 文件ID={}, 用户={}", proofFileId, username);
+                        } else {
+                            logger.warn("文件ID={}不属于用户{}或已审核", proofFileId, username);
+                        }
+                    } else {
+                        logger.warn("未找到文件ID={}", proofFileId);
+                    }
+                } else {
+                    // 兼容旧逻辑：审核该用户所有待审核文件
+                    List<ProofFile> userProofFiles = proofFileRepository.findByUserAccountIdAndAuditStatus(
+                        user.getId(), ProofFile.AuditStatus.PENDING);
                     
-                    proofFile.setMedalAwardTime(LocalDateTime.now());
-                    proofFileRepository.save(proofFile);
+                    for (ProofFile proofFile : userProofFiles) {
+                        proofFile.setAuditStatus(ProofFile.AuditStatus.APPROVED);
+                        proofFile.setAuditTime(LocalDateTime.now());
+                        
+                        // 设置主要勋章类型（选择数量最多的）
+                        if (goldNum != null && goldNum > 0) {
+                            proofFile.setMedalAwarded(ProofFile.MedalType.GOLD);
+                        } else if (silverNum != null && silverNum > 0) {
+                            proofFile.setMedalAwarded(ProofFile.MedalType.SILVER);
+                        } else if (bronzeNum != null && bronzeNum > 0) {
+                            proofFile.setMedalAwarded(ProofFile.MedalType.BRONZE);
+                        }
+                        
+                        proofFile.setMedalAwardTime(LocalDateTime.now());
+                        proofFileRepository.save(proofFile);
+                    }
                 }
                 
                 response.put("success", true);
@@ -195,13 +404,35 @@ public class AdminController {
                 
             } else {
                 // 审核拒绝
-                List<ProofFile> userProofFiles = proofFileRepository.findByUserAccountIdAndAuditStatus(
-                    user.getId(), ProofFile.AuditStatus.PENDING);
-                
-                for (ProofFile proofFile : userProofFiles) {
-                    proofFile.setAuditStatus(ProofFile.AuditStatus.REJECTED);
-                    proofFile.setAuditTime(LocalDateTime.now());
-                    proofFileRepository.save(proofFile);
+                if (proofFileId != null) {
+                    // 拒绝特定文件
+                    Optional<ProofFile> proofFileOpt = proofFileRepository.findById(proofFileId);
+                    if (proofFileOpt.isPresent()) {
+                        ProofFile proofFile = proofFileOpt.get();
+                        if (proofFile.getUserAccountId().equals(user.getId()) && 
+                            proofFile.getAuditStatus() == ProofFile.AuditStatus.PENDING) {
+                            
+                            proofFile.setAuditStatus(ProofFile.AuditStatus.REJECTED);
+                            proofFile.setAuditTime(LocalDateTime.now());
+                            proofFileRepository.save(proofFile);
+                            
+                            logger.info("审核拒绝: 文件ID={}, 用户={}", proofFileId, username);
+                        } else {
+                            logger.warn("文件ID={}不属于用户{}或已审核", proofFileId, username);
+                        }
+                    } else {
+                        logger.warn("未找到文件ID={}", proofFileId);
+                    }
+                } else {
+                    // 兼容旧逻辑：拒绝该用户所有待审核文件
+                    List<ProofFile> userProofFiles = proofFileRepository.findByUserAccountIdAndAuditStatus(
+                        user.getId(), ProofFile.AuditStatus.PENDING);
+                    
+                    for (ProofFile proofFile : userProofFiles) {
+                        proofFile.setAuditStatus(ProofFile.AuditStatus.REJECTED);
+                        proofFile.setAuditTime(LocalDateTime.now());
+                        proofFileRepository.save(proofFile);
+                    }
                 }
                 
                 response.put("success", true);
@@ -323,6 +554,35 @@ public class AdminController {
                 nftImageInfo.put("thumbnailUrl", "http://localhost:5000/api/admin/nft-thumbnail/" + nftImage.getImageName());
                 nftImageInfo.put("uploadTime", nftImage.getUploadTime().toString());
                 nftImageInfo.put("mintStatus", nftImage.getMintStatus().name());
+                
+                // ✅ 关键修复：读取并返回Base64编码的图片数据
+                try {
+                    String imagePath = nftImage.getImagePath();
+                    Path imageFilePath;
+                    
+                    // 处理路径（与下载文件逻辑一致）
+                    if (imagePath.startsWith("/uploads/")) {
+                        imageFilePath = Paths.get(imagePath.substring(1));
+                    } else {
+                        imageFilePath = Paths.get(imagePath);
+                    }
+                    
+                    if (Files.exists(imageFilePath)) {
+                        byte[] imageBytes = Files.readAllBytes(imageFilePath);
+                        String base64Data = java.util.Base64.getEncoder().encodeToString(imageBytes);
+                        // 根据图片类型添加Data URL前缀
+                        String mimeType = nftImage.getImageType() != null ? nftImage.getImageType() : "image/jpeg";
+                        String imageData = "data:" + mimeType + ";base64," + base64Data;
+                        nftImageInfo.put("imageData", imageData);
+                        logger.info("成功读取NFT图片数据，大小: {} bytes", imageBytes.length);
+                    } else {
+                        logger.warn("NFT图片文件不存在: {}", imageFilePath);
+                        nftImageInfo.put("imageData", null);
+                    }
+                } catch (Exception e) {
+                    logger.error("读取NFT图片失败", e);
+                    nftImageInfo.put("imageData", null);
+                }
             }
             
             Map<String, Object> materialDetail = new HashMap<>();
@@ -337,6 +597,7 @@ public class AdminController {
             materialDetail.put("objectKey", proofFile.getFileName());
             
             // 用户信息
+            materialDetail.put("userAccountId", user.getId());  // ⭐ 添加用户账户ID
             materialDetail.put("walletAddress", user.getWalletAddress());
             materialDetail.put("displayName", user.getDisplayName());
             materialDetail.put("username", user.getDisplayName() != null ? user.getDisplayName() : user.getWalletAddress());
@@ -373,22 +634,31 @@ public class AdminController {
     public ResponseEntity<Map<String, Object>> approveRepresentativeWork(@RequestBody Map<String, Object> request) {
         Map<String, Object> response = new HashMap<>();
         
+        logger.info("📥 收到代表作审批请求: {}", request);
+        
         try {
             Long userId = Long.valueOf(request.get("userId").toString());
             Boolean approved = (Boolean) request.get("approved");
             
-            logger.info("更新代表作展示审批: userId={}, approved={}", userId, approved);
+            logger.info("🔍 更新代表作展示审批: userId={}, approved={}", userId, approved);
             
             UserAccount user = userAccountService.findById(userId);
             if (user == null) {
+                logger.error("❌ 用户不存在: userId={}", userId);
                 response.put("success", false);
                 response.put("message", "用户不存在");
                 return ResponseEntity.status(400).body(response);
             }
             
+            logger.info("📝 更新前: wallet={}, displayName={}, adminApprovedDisplay={}", 
+                    user.getWalletAddress(), user.getDisplayName(), user.getAdminApprovedDisplay());
+            
             user.setAdminApprovedDisplay(approved);
             user.setUpdateTime(LocalDateTime.now());
             userAccountService.save(user);
+            
+            logger.info("✅ 更新后: wallet={}, displayName={}, adminApprovedDisplay={}", 
+                    user.getWalletAddress(), user.getDisplayName(), user.getAdminApprovedDisplay());
             
             response.put("success", true);
             response.put("message", approved ? "已同意展示代表作" : "已拒绝展示代表作");
@@ -403,6 +673,72 @@ public class AdminController {
         }
     }
 
+    /**
+     * 检查用户勋章数据一致性
+     */
+    @GetMapping("/check-medals")
+    public ResponseEntity<Map<String, Object>> checkMedals() {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            logger.info("检查所有用户勋章数据");
+            
+            List<UserAccount> allUsers = userAccountRepository.findAll();
+            List<Map<String, Object>> userMedals = new ArrayList<>();
+            
+            for (UserAccount user : allUsers) {
+                // 只显示有勋章的用户
+                if (user.getGoldMedals() > 0 || user.getSilverMedals() > 0 || user.getBronzeMedals() > 0 ||
+                    user.getBlockchainGoldMedals() > 0 || user.getBlockchainSilverMedals() > 0 || user.getBlockchainBronzeMedals() > 0) {
+                    
+                    Map<String, Object> userInfo = new HashMap<>();
+                    userInfo.put("walletAddress", user.getWalletAddress());
+                    userInfo.put("displayName", user.getDisplayName() != null ? user.getDisplayName() : "未设置");
+                    
+                    // 数据库中的勋章数据
+                    Map<String, Integer> dbMedals = new HashMap<>();
+                    dbMedals.put("gold", user.getGoldMedals());
+                    dbMedals.put("silver", user.getSilverMedals());
+                    dbMedals.put("bronze", user.getBronzeMedals());
+                    dbMedals.put("total", user.getTotalMedals());
+                    userInfo.put("databaseMedals", dbMedals);
+                    
+                    // 区块链同步的勋章数据
+                    Map<String, Integer> bcMedals = new HashMap<>();
+                    bcMedals.put("gold", user.getBlockchainGoldMedals());
+                    bcMedals.put("silver", user.getBlockchainSilverMedals());
+                    bcMedals.put("bronze", user.getBlockchainBronzeMedals());
+                    userInfo.put("blockchainMedals", bcMedals);
+                    
+                    // 一致性检查
+                    boolean isConsistent = user.getGoldMedals().equals(user.getBlockchainGoldMedals()) &&
+                                          user.getSilverMedals().equals(user.getBlockchainSilverMedals()) &&
+                                          user.getBronzeMedals().equals(user.getBlockchainBronzeMedals());
+                    userInfo.put("isConsistent", isConsistent);
+                    userInfo.put("consistencyStatus", isConsistent ? "✅ 一致" : "❌ 不一致");
+                    
+                    userInfo.put("blockchainSyncTime", user.getBlockchainSyncTime() != null ? 
+                        user.getBlockchainSyncTime().toString() : "未同步");
+                    
+                    userMedals.add(userInfo);
+                }
+            }
+            
+            response.put("success", true);
+            response.put("data", userMedals);
+            response.put("totalUsers", userMedals.size());
+            
+            logger.info("成功检查{}个用户的勋章数据", userMedals.size());
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("检查勋章数据失败", e);
+            response.put("success", false);
+            response.put("message", "检查失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
     /**
      * 获取所有证明文件（用于调试）
      */

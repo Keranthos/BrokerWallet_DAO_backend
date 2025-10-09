@@ -94,9 +94,8 @@ public class UserAccountService {
     }
     
     /**
-     * 获取勋章排行榜（带缓存）
+     * 获取勋章排行榜（实时查询，无缓存）
      */
-    @Cacheable(value = "medal-ranking", key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     public Page<UserAccount> getMedalRanking(Pageable pageable) {
         logger.info("查询勋章排行榜: page={}, size={}", pageable.getPageNumber(), pageable.getPageSize());
         return userAccountRepository.findAllByOrderByTotalMedalScoreDescGoldMedalsDescSilverMedalsDesc(pageable);
@@ -118,9 +117,8 @@ public class UserAccountService {
     }
     
     /**
-     * 获取勋章统计信息（带缓存）
+     * 获取勋章统计信息（实时查询，无缓存）
      */
-    @Cacheable(value = "medal-stats")
     public Map<String, Object> getMedalStats() {
         logger.info("获取勋章统计信息");
         
@@ -129,10 +127,6 @@ public class UserAccountService {
         // 总用户数
         long totalUsers = userAccountRepository.count();
         stats.put("totalUsers", totalUsers);
-        
-        // 有勋章的用户数
-        long usersWithMedals = userAccountRepository.countByTotalMedalScoreGreaterThan(0);
-        stats.put("usersWithMedals", usersWithMedals);
         
         // 各种勋章总数
         Long totalGoldMedals = userAccountRepository.sumGoldMedals();
@@ -147,7 +141,7 @@ public class UserAccountService {
         UserAccount topUser = userAccountRepository.findTopByOrderByTotalMedalScoreDescGoldMedalsDescSilverMedalsDesc();
         if (topUser != null) {
             stats.put("highestScore", topUser.getTotalMedalScore());
-            stats.put("topUserDisplayName", topUser.getDisplayName() != null ? topUser.getDisplayName() : "匿名用户");
+            stats.put("topUserDisplayName", topUser.getDisplayName() != null ? topUser.getDisplayName() : "Anonymous User");
         } else {
             stats.put("highestScore", 0);
             stats.put("topUserDisplayName", null);

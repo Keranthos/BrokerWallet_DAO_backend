@@ -54,6 +54,12 @@ blockchain:
 
 # 自定义配置
 brokerwallet:
+  # 服务器URL配置（用于图片访问）
+  server:
+    # USB连接调试时使用本地IP，部署到云服务器时修改为云服务器地址
+    # 例如：http://192.168.1.100:5000 或 http://your-domain.com
+    url: "http://localhost:5000"
+  
   file:
     # 文件存储路径（相对于项目根目录）
     upload-path: uploads/
