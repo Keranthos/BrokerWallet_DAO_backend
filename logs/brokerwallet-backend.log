@@ -10225,3 +10225,2882 @@ java.lang.IndexOutOfBoundsException: Index: 0
 2025-10-10 15:51:37 [http-nio-5000-exec-5] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [*/*] and supported [application/json, application/*+json]
 2025-10-10 15:51:37 [http-nio-5000-exec-5] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{data={totalUsers=2, highestScore=97, totalBronzeMedals=9, totalGoldMedals=34, totalSilverMedals=7,  (truncated)...]
 2025-10-10 15:51:37 [http-nio-5000-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:08 [http-nio-5000-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - OPTIONS "/api/admin/pending-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:08 [http-nio-5000-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getPendingUsers(int, int)
+2025-10-10 16:15:08 [http-nio-5000-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/admin/pending-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getPendingUsers(int, int)
+2025-10-10 16:15:08 [http-nio-5000-exec-4] INFO  c.b.controller.AdminController - 获取待审核批次列表: page=1, limit=10
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.audit_status=? 
+        and pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:08 [http-nio-5000-exec-4] INFO  c.b.controller.AdminController - 找到 6 个待审核批次
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:08 [http-nio-5000-exec-4] INFO  c.b.controller.AdminController - 成功获取6个待审核批次
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{total=6, code=1, success=true, totalPages=1, message=获取成功, currentPage=1, users=[{fileName=82dc8e6a (truncated)...]
+2025-10-10 16:15:08 [http-nio-5000-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:10 [http-nio-5000-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - OPTIONS "/api/admin/approved-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:10 [http-nio-5000-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getApprovedUsers(int, int)
+2025-10-10 16:15:10 [http-nio-5000-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/admin/approved-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getApprovedUsers(int, int)
+2025-10-10 16:15:10 [http-nio-5000-exec-3] INFO  c.b.controller.AdminController - 获取已审核批次列表: page=1, limit=10
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.audit_status=? 
+        and pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.audit_status=? 
+        and pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:10 [http-nio-5000-exec-3] INFO  c.b.controller.AdminController - 找到 8 个已审核批次（通过:7, 拒绝:1）
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:10 [http-nio-5000-exec-3] INFO  c.b.controller.AdminController - 成功获取8个已审核批次
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{total=8, code=1, success=true, totalPages=1, message=获取成功, currentPage=1, users=[{fileName=a495f9e1 (truncated)...]
+2025-10-10 16:15:10 [http-nio-5000-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/admin/pending-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getPendingUsers(int, int)
+2025-10-10 16:15:11 [http-nio-5000-exec-10] INFO  c.b.controller.AdminController - 获取待审核批次列表: page=1, limit=10
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.audit_status=? 
+        and pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:11 [http-nio-5000-exec-10] INFO  c.b.controller.AdminController - 找到 6 个待审核批次
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:11 [http-nio-5000-exec-10] INFO  c.b.controller.AdminController - 成功获取6个待审核批次
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{total=6, code=1, success=true, totalPages=1, message=获取成功, currentPage=1, users=[{fileName=82dc8e6a (truncated)...]
+2025-10-10 16:15:11 [http-nio-5000-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/admin/approved-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getApprovedUsers(int, int)
+2025-10-10 16:15:12 [http-nio-5000-exec-5] INFO  c.b.controller.AdminController - 获取已审核批次列表: page=1, limit=10
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.audit_status=? 
+        and pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.audit_status=? 
+        and pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:12 [http-nio-5000-exec-5] INFO  c.b.controller.AdminController - 找到 8 个已审核批次（通过:7, 拒绝:1）
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-5] INFO  c.b.controller.AdminController - 成功获取8个已审核批次
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{total=8, code=1, success=true, totalPages=1, message=获取成功, currentPage=1, users=[{fileName=a495f9e1 (truncated)...]
+2025-10-10 16:15:12 [http-nio-5000-exec-5] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/admin/pending-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getPendingUsers(int, int)
+2025-10-10 16:15:12 [http-nio-5000-exec-1] INFO  c.b.controller.AdminController - 获取待审核批次列表: page=1, limit=10
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.audit_status=? 
+        and pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:12 [http-nio-5000-exec-1] INFO  c.b.controller.AdminController - 找到 6 个待审核批次
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:12 [http-nio-5000-exec-1] INFO  c.b.controller.AdminController - 成功获取6个待审核批次
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{total=6, code=1, success=true, totalPages=1, message=获取成功, currentPage=1, users=[{fileName=82dc8e6a (truncated)...]
+2025-10-10 16:15:12 [http-nio-5000-exec-1] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:14 [http-nio-5000-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - OPTIONS "/api/admin/material-detail/33", parameters={}
+2025-10-10 16:15:14 [http-nio-5000-exec-2] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getMaterialDetail(Long)
+2025-10-10 16:15:14 [http-nio-5000-exec-2] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:14 [http-nio-5000-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/admin/material-detail/33", parameters={}
+2025-10-10 16:15:14 [http-nio-5000-exec-7] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getMaterialDetail(Long)
+2025-10-10 16:15:14 [http-nio-5000-exec-7] INFO  c.b.controller.AdminController - 获取材料详情: id=33
+2025-10-10 16:15:14 [http-nio-5000-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.id=?
+2025-10-10 16:15:14 [http-nio-5000-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:14 [http-nio-5000-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:14 [http-nio-5000-exec-7] INFO  c.b.controller.AdminController - 该提交包含 2 个证明文件
+2025-10-10 16:15:14 [http-nio-5000-exec-7] DEBUG org.hibernate.SQL - 
+    select
+        ni1_0.id,
+        ni1_0.base64_data,
+        ni1_0.image_hash,
+        ni1_0.image_height,
+        ni1_0.image_name,
+        ni1_0.image_path,
+        ni1_0.image_size,
+        ni1_0.image_type,
+        ni1_0.image_width,
+        ni1_0.mint_status,
+        ni1_0.nft_description,
+        ni1_0.nft_name,
+        ni1_0.original_name,
+        ni1_0.proof_file_id,
+        ni1_0.status,
+        ni1_0.thumbnail_path,
+        ni1_0.token_id,
+        ni1_0.transaction_hash,
+        ni1_0.upload_time,
+        ni1_0.user_account_id 
+    from
+        nft_images ni1_0 
+    where
+        ni1_0.user_account_id=? 
+    order by
+        ni1_0.upload_time desc
+2025-10-10 16:15:14 [http-nio-5000-exec-7] INFO  c.b.controller.AdminController - 成功读取NFT图片数据，大小: 325233 bytes
+2025-10-10 16:15:14 [http-nio-5000-exec-7] INFO  c.b.controller.AdminController - 材料详情获取成功: 33
+2025-10-10 16:15:14 [http-nio-5000-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2025-10-10 16:15:14 [http-nio-5000-exec-7] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{data={fileName=82dc8e6aa5a642f3973d8e17e3ef7890_1760003716003.docx, auditStatusCode=PENDING, displa (truncated)...]
+2025-10-10 16:15:14 [http-nio-5000-exec-7] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/admin/pending-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getPendingUsers(int, int)
+2025-10-10 16:15:16 [http-nio-5000-exec-9] INFO  c.b.controller.AdminController - 获取待审核批次列表: page=1, limit=10
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.audit_status=? 
+        and pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:16 [http-nio-5000-exec-9] INFO  c.b.controller.AdminController - 找到 6 个待审核批次
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:16 [http-nio-5000-exec-9] INFO  c.b.controller.AdminController - 成功获取6个待审核批次
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{total=6, code=1, success=true, totalPages=1, message=获取成功, currentPage=1, users=[{fileName=82dc8e6a (truncated)...]
+2025-10-10 16:15:16 [http-nio-5000-exec-9] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:17 [http-nio-5000-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - OPTIONS "/api/admin/all-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:17 [http-nio-5000-exec-6] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getAllUsers(int, int)
+2025-10-10 16:15:17 [http-nio-5000-exec-6] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/admin/all-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getAllUsers(int, int)
+2025-10-10 16:15:17 [http-nio-5000-exec-4] INFO  c.b.controller.AdminController - 获取所有批次列表: page=1, limit=10
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:17 [http-nio-5000-exec-4] INFO  c.b.controller.AdminController - 找到 14 个批次（按时间倒序）
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:17 [http-nio-5000-exec-4] INFO  c.b.controller.AdminController - 成功获取10个批次
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{total=14, code=1, success=true, totalPages=2, message=获取成功, currentPage=1, users=[{fileName=a495f9e (truncated)...]
+2025-10-10 16:15:17 [http-nio-5000-exec-4] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/admin/approved-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getApprovedUsers(int, int)
+2025-10-10 16:15:21 [http-nio-5000-exec-8] INFO  c.b.controller.AdminController - 获取已审核批次列表: page=1, limit=10
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.audit_status=? 
+        and pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.audit_status=? 
+        and pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:21 [http-nio-5000-exec-8] INFO  c.b.controller.AdminController - 找到 8 个已审核批次（通过:7, 拒绝:1）
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:21 [http-nio-5000-exec-8] INFO  c.b.controller.AdminController - 成功获取8个已审核批次
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{total=8, code=1, success=true, totalPages=1, message=获取成功, currentPage=1, users=[{fileName=a495f9e1 (truncated)...]
+2025-10-10 16:15:21 [http-nio-5000-exec-8] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/admin/pending-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getPendingUsers(int, int)
+2025-10-10 16:15:22 [http-nio-5000-exec-3] INFO  c.b.controller.AdminController - 获取待审核批次列表: page=1, limit=10
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.audit_status=? 
+        and pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:22 [http-nio-5000-exec-3] INFO  c.b.controller.AdminController - 找到 6 个待审核批次
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:22 [http-nio-5000-exec-3] INFO  c.b.controller.AdminController - 成功获取6个待审核批次
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{total=6, code=1, success=true, totalPages=1, message=获取成功, currentPage=1, users=[{fileName=82dc8e6a (truncated)...]
+2025-10-10 16:15:22 [http-nio-5000-exec-3] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - GET "/api/admin/all-users?page=1&limit=10", parameters={masked}
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG o.s.w.s.m.m.a.RequestMappingHandlerMapping - Mapped to com.brokerwallet.controller.AdminController#getAllUsers(int, int)
+2025-10-10 16:15:23 [http-nio-5000-exec-10] INFO  c.b.controller.AdminController - 获取所有批次列表: page=1, limit=10
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.submission_batch_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id is not null 
+    group by
+        pf1_0.submission_batch_id 
+    order by
+        max(pf1_0.upload_time) desc
+2025-10-10 16:15:23 [http-nio-5000-exec-10] INFO  c.b.controller.AdminController - 找到 14 个批次（按时间倒序）
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        ua1_0.id,
+        ua1_0.admin_approved_display,
+        ua1_0.blockchain_bronze_medals,
+        ua1_0.blockchain_gold_medals,
+        ua1_0.blockchain_silver_medals,
+        ua1_0.blockchain_sync_time,
+        ua1_0.bronze_medals,
+        ua1_0.create_time,
+        ua1_0.display_name,
+        ua1_0.gold_medals,
+        ua1_0.representative_work,
+        ua1_0.show_representative_work,
+        ua1_0.silver_medals,
+        ua1_0.status,
+        ua1_0.total_medals,
+        ua1_0.total_nfts,
+        ua1_0.total_proofs,
+        ua1_0.update_time,
+        ua1_0.verified_proofs,
+        ua1_0.wallet_address 
+    from
+        user_accounts ua1_0 
+    where
+        ua1_0.id=?
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        pf1_0.id,
+        pf1_0.audit_status,
+        pf1_0.audit_time,
+        pf1_0.file_hash,
+        pf1_0.file_name,
+        pf1_0.file_path,
+        pf1_0.file_size,
+        pf1_0.file_type,
+        pf1_0.medal_award_time,
+        pf1_0.medal_awarded,
+        pf1_0.medal_transaction_hash,
+        pf1_0.nft_image_hash,
+        pf1_0.original_name,
+        pf1_0.status,
+        pf1_0.submission_batch_id,
+        pf1_0.token_reward,
+        pf1_0.token_reward_tx_hash,
+        pf1_0.upload_time,
+        pf1_0.user_account_id 
+    from
+        proof_files pf1_0 
+    where
+        pf1_0.submission_batch_id=? 
+    order by
+        pf1_0.upload_time
+2025-10-10 16:15:23 [http-nio-5000-exec-10] INFO  c.b.controller.AdminController - 成功获取10个批次
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Using 'application/json', given [application/json, text/plain, */*] and supported [application/json, application/*+json]
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG o.s.w.s.m.m.a.HttpEntityMethodProcessor - Writing [{total=14, code=1, success=true, totalPages=2, message=获取成功, currentPage=1, users=[{fileName=a495f9e (truncated)...]
+2025-10-10 16:15:23 [http-nio-5000-exec-10] DEBUG o.s.web.servlet.DispatcherServlet - Completed 200 OK
