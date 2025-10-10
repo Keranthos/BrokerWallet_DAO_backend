@@ -25,11 +25,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,13 +52,16 @@ public class AdminController {
     private ProofFileRepository proofFileRepository;
     
     @Autowired
+    private com.brokerwallet.util.MedalImageGenerator medalImageGenerator;
+    
+    @Autowired
+    private BlockchainService blockchainService;
+    
+    @Autowired
     private UserAccountRepository userAccountRepository;
     
     @Autowired
     private UserAccountService userAccountService;
-    
-    @Autowired
-    private BlockchainService blockchainService;
     
     @Autowired
     private BlockchainSyncService blockchainSyncService;
@@ -65,7 +70,80 @@ public class AdminController {
     private com.brokerwallet.repository.NftImageRepository nftImageRepository;
     
     /**
-     * 获取待审核的文件列表
+     * 检查后端账户状态
+     */
+    @GetMapping("/account-status")
+    public ResponseEntity<Map<String, Object>> checkAccountStatus() {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            logger.info("检查后端账户状态");
+            
+            String accountAddress = blockchainService.getAccountAddress();
+            
+            // 测试连接
+            boolean connected = false;
+            BigInteger balance = BigInteger.ZERO;
+            boolean hasNftPermission = false;
+            String mintFee = "0";
+            
+            try {
+                // 测试区块链连接
+                String testResult = blockchainService.testContractConnection();
+                connected = testResult.contains("successfully");
+                
+                // 获取余额
+                org.web3j.protocol.core.methods.response.EthGetBalance balanceResponse = 
+                    blockchainService.getWeb3j().ethGetBalance(accountAddress, 
+                        org.web3j.protocol.core.DefaultBlockParameterName.LATEST).send();
+                
+                if (!balanceResponse.hasError()) {
+                    balance = balanceResponse.getBalance();
+                }
+                
+                // 检查NFT铸造权限
+                hasNftPermission = blockchainService.hasMintPermission(accountAddress);
+                
+                // 获取NFT铸造费用
+                java.math.BigInteger mintFeeWei = blockchainService.getMintFee();
+                double mintFeeEth = mintFeeWei.doubleValue() / 1e18;
+                mintFee = String.format("%.6f", mintFeeEth);
+                
+            } catch (Exception e) {
+                logger.error("检查账户状态失败", e);
+                connected = false;
+            }
+            
+            // 转换余额为ETH
+            double balanceEth = balance.doubleValue() / 1e18;
+            
+            Map<String, Object> data = new HashMap<>();
+            data.put("connected", connected);
+            data.put("address", accountAddress);
+            data.put("balance", balanceEth);
+            data.put("balanceWei", balance.toString());
+            data.put("hasNftPermission", hasNftPermission);
+            data.put("mintFee", mintFee);
+            data.put("timestamp", java.time.LocalDateTime.now().toString());
+            
+            response.put("success", true);
+            response.put("data", data);
+            
+            logger.info("账户状态检查完成: connected={}, balance={} ETH, hasPermission={}", 
+                connected, balanceEth, hasNftPermission);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("检查账户状态失败", e);
+            response.put("success", false);
+            response.put("message", "检查失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 获取待审核的文件列表（按批次分组）
      */
     @GetMapping("/pending-users")
     public ResponseEntity<Map<String, Object>> getPendingUsers(
@@ -75,48 +153,63 @@ public class AdminController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            logger.info("获取待审核文件列表: page={}, limit={}", page, limit);
+            logger.info("获取待审核批次列表: page={}, limit={}", page, limit);
             
-            // 创建分页对象（注意：Spring Data JPA的页码从0开始）
-            Pageable pageable = PageRequest.of(page - 1, limit, 
-                Sort.by(Sort.Direction.DESC, "uploadTime"));
+            // 查询所有待审核的批次ID
+            List<String> allBatchIds = proofFileRepository.findDistinctBatchIdsByAuditStatus(
+                ProofFile.AuditStatus.PENDING);
             
-            // 查询待审核的证明文件
-            Page<ProofFile> proofFilePage = proofFileRepository.findByAuditStatus(
-                ProofFile.AuditStatus.PENDING, pageable);
+            logger.info("找到 {} 个待审核批次", allBatchIds.size());
+            
+            // 手动分页
+            int start = (page - 1) * limit;
+            int end = Math.min(start + limit, allBatchIds.size());
+            List<String> pagedBatchIds = allBatchIds.subList(start, end);
             
             List<Map<String, Object>> users = new ArrayList<>();
             
-            for (ProofFile proofFile : proofFilePage.getContent()) {
+            for (String batchId : pagedBatchIds) {
+                // 获取该批次的所有文件
+                List<ProofFile> batchFiles = proofFileRepository.findBySubmissionBatchIdOrderByUploadTimeAsc(batchId);
+                if (batchFiles.isEmpty()) continue;
+                
+                // 使用第一个文件的信息作为批次代表
+                ProofFile firstFile = batchFiles.get(0);
+                
                 // 获取用户信息
-                UserAccount user = userAccountService.findById(proofFile.getUserAccountId());
+                UserAccount user = userAccountService.findById(firstFile.getUserAccountId());
                 if (user == null) continue;
                 
                 Map<String, Object> userInfo = new HashMap<>();
-                userInfo.put("id", proofFile.getId());
+                userInfo.put("id", firstFile.getId());  // 使用第一个文件的ID
+                userInfo.put("batchId", batchId);  // 添加批次ID
+                userInfo.put("fileCount", batchFiles.size());  // 添加文件数量
                 userInfo.put("username", user.getDisplayName() != null ? user.getDisplayName() : user.getWalletAddress());
                 userInfo.put("email", user.getWalletAddress()); // 使用钱包地址作为邮箱
-                userInfo.put("originalFilename", proofFile.getOriginalName());
-                userInfo.put("fileName", proofFile.getFileName());
-                userInfo.put("fileSize", proofFile.getFileSize());
-                userInfo.put("uploadTime", proofFile.getUploadTime().toString());
-                userInfo.put("auditStatus", proofFile.getAuditStatus().getDescription());
-                userInfo.put("objectKey", proofFile.getFileName()); // 用于下载
-                userInfo.put("filePath", proofFile.getFilePath());
-                userInfo.put("userAccountId", proofFile.getUserAccountId());
+                userInfo.put("originalFilename", firstFile.getOriginalName());
+                userInfo.put("fileName", firstFile.getFileName());
+                userInfo.put("fileSize", firstFile.getFileSize());
+                userInfo.put("uploadTime", firstFile.getUploadTime().toString());
+                userInfo.put("auditStatus", firstFile.getAuditStatus().getDescription());
+                userInfo.put("objectKey", firstFile.getFileName()); // 用于下载
+                userInfo.put("filePath", firstFile.getFilePath());
+                userInfo.put("userAccountId", firstFile.getUserAccountId());
                 
                 users.add(userInfo);
             }
+            
+            // 计算总页数
+            int totalPages = (int) Math.ceil((double) allBatchIds.size() / limit);
             
             response.put("code", 1);
             response.put("success", true);
             response.put("message", "获取成功");
             response.put("users", users);
-            response.put("total", proofFilePage.getTotalElements());
+            response.put("total", allBatchIds.size());  // 总批次数
             response.put("currentPage", page);
-            response.put("totalPages", proofFilePage.getTotalPages());
+            response.put("totalPages", totalPages);
             
-            logger.info("成功获取{}条待审核文件", users.size());
+            logger.info("成功获取{}个待审核批次", users.size());
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
@@ -129,7 +222,7 @@ public class AdminController {
     }
     
     /**
-     * 获取已审核的文件列表
+     * 获取已审核的文件列表（包括通过和拒绝，按批次分组）
      */
     @GetMapping("/approved-users")
     public ResponseEntity<Map<String, Object>> getApprovedUsers(
@@ -139,51 +232,75 @@ public class AdminController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            logger.info("获取已审核文件列表: page={}, limit={}", page, limit);
+            logger.info("获取已审核批次列表: page={}, limit={}", page, limit);
             
-            // 创建分页对象（注意：Spring Data JPA的页码从0开始）
-            Pageable pageable = PageRequest.of(page - 1, limit, 
-                Sort.by(Sort.Direction.DESC, "auditTime"));
+            // 查询所有已审核的批次ID（包括通过和拒绝）
+            List<String> approvedBatchIds = proofFileRepository.findDistinctBatchIdsByAuditStatus(
+                ProofFile.AuditStatus.APPROVED);
+            List<String> rejectedBatchIds = proofFileRepository.findDistinctBatchIdsByAuditStatus(
+                ProofFile.AuditStatus.REJECTED);
             
-            // 查询已审核的证明文件
-            Page<ProofFile> proofFilePage = proofFileRepository.findByAuditStatus(
-                ProofFile.AuditStatus.APPROVED, pageable);
+            // 合并两个列表
+            List<String> allBatchIds = new ArrayList<>();
+            allBatchIds.addAll(approvedBatchIds);
+            allBatchIds.addAll(rejectedBatchIds);
+            
+            logger.info("找到 {} 个已审核批次（通过:{}, 拒绝:{}）", 
+                allBatchIds.size(), approvedBatchIds.size(), rejectedBatchIds.size());
+            
+            // 手动分页
+            int start = (page - 1) * limit;
+            int end = Math.min(start + limit, allBatchIds.size());
+            List<String> pagedBatchIds = allBatchIds.subList(start, end);
             
             List<Map<String, Object>> users = new ArrayList<>();
             
-            for (ProofFile proofFile : proofFilePage.getContent()) {
+            for (String batchId : pagedBatchIds) {
+                // 获取该批次的所有文件
+                List<ProofFile> batchFiles = proofFileRepository.findBySubmissionBatchIdOrderByUploadTimeAsc(batchId);
+                if (batchFiles.isEmpty()) continue;
+                
+                // 使用第一个文件的信息作为批次代表
+                ProofFile firstFile = batchFiles.get(0);
+                
                 // 获取用户信息
-                UserAccount user = userAccountService.findById(proofFile.getUserAccountId());
+                UserAccount user = userAccountService.findById(firstFile.getUserAccountId());
                 if (user == null) continue;
                 
                 Map<String, Object> userInfo = new HashMap<>();
-                userInfo.put("id", proofFile.getId());
+                userInfo.put("id", firstFile.getId());  // 使用第一个文件的ID
+                userInfo.put("batchId", batchId);  // 添加批次ID
+                userInfo.put("fileCount", batchFiles.size());  // 添加文件数量
                 userInfo.put("username", user.getDisplayName() != null ? user.getDisplayName() : user.getWalletAddress());
                 userInfo.put("email", user.getWalletAddress());
                 userInfo.put("walletAddress", user.getWalletAddress());
-                userInfo.put("originalFilename", proofFile.getOriginalName());
-                userInfo.put("fileName", proofFile.getFileName());
-                userInfo.put("fileSize", proofFile.getFileSize());
-                userInfo.put("uploadTime", proofFile.getUploadTime().toString());
-                userInfo.put("auditStatus", proofFile.getAuditStatus().getDescription());
-                userInfo.put("auditTime", proofFile.getAuditTime() != null ? proofFile.getAuditTime().toString() : null);
-                userInfo.put("medalAwarded", proofFile.getMedalAwarded() != null ? proofFile.getMedalAwarded().name() : null);
-                userInfo.put("objectKey", proofFile.getFileName());
-                userInfo.put("filePath", proofFile.getFilePath());
-                userInfo.put("userAccountId", proofFile.getUserAccountId());
+                userInfo.put("originalFilename", firstFile.getOriginalName());
+                userInfo.put("fileName", firstFile.getFileName());
+                userInfo.put("fileSize", firstFile.getFileSize());
+                userInfo.put("uploadTime", firstFile.getUploadTime().toString());
+                userInfo.put("auditStatus", firstFile.getAuditStatus().getDescription());
+                userInfo.put("auditStatusCode", firstFile.getAuditStatus().name()); // 添加状态码用于前端判断
+                userInfo.put("auditTime", firstFile.getAuditTime() != null ? firstFile.getAuditTime().toString() : null);
+                userInfo.put("medalAwarded", firstFile.getMedalAwarded() != null ? firstFile.getMedalAwarded().name() : null);
+                userInfo.put("objectKey", firstFile.getFileName());
+                userInfo.put("filePath", firstFile.getFilePath());
+                userInfo.put("userAccountId", firstFile.getUserAccountId());
                 
                 users.add(userInfo);
             }
+            
+            // 计算总页数
+            int totalPages = (int) Math.ceil((double) allBatchIds.size() / limit);
             
             response.put("code", 1);
             response.put("success", true);
             response.put("message", "获取成功");
             response.put("users", users);
-            response.put("total", proofFilePage.getTotalElements());
+            response.put("total", allBatchIds.size());  // 总批次数
             response.put("currentPage", page);
-            response.put("totalPages", proofFilePage.getTotalPages());
+            response.put("totalPages", totalPages);
             
-            logger.info("成功获取{}条已审核文件", users.size());
+            logger.info("成功获取{}个已审核批次", users.size());
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
@@ -196,7 +313,7 @@ public class AdminController {
     }
     
     /**
-     * 获取所有文件列表（待审核+已审核+已拒绝）
+     * 获取所有文件列表（待审核+已审核+已拒绝，按批次分组）
      */
     @GetMapping("/all-users")
     public ResponseEntity<Map<String, Object>> getAllUsers(
@@ -206,50 +323,66 @@ public class AdminController {
         Map<String, Object> response = new HashMap<>();
         
         try {
-            logger.info("获取所有文件列表: page={}, limit={}", page, limit);
+            logger.info("获取所有批次列表: page={}, limit={}", page, limit);
             
-            // 创建分页对象
-            Pageable pageable = PageRequest.of(page - 1, limit, 
-                Sort.by(Sort.Direction.DESC, "uploadTime"));
+            // 直接查询所有批次ID（不区分状态，按时间倒序）
+            List<String> allBatchIds = proofFileRepository.findAllDistinctBatchIds();
             
-            // 查询所有证明文件
-            Page<ProofFile> proofFilePage = proofFileRepository.findAll(pageable);
+            logger.info("找到 {} 个批次（按时间倒序）", allBatchIds.size());
+            
+            // 手动分页
+            int start = (page - 1) * limit;
+            int end = Math.min(start + limit, allBatchIds.size());
+            List<String> pagedBatchIds = allBatchIds.subList(start, end);
             
             List<Map<String, Object>> users = new ArrayList<>();
             
-            for (ProofFile proofFile : proofFilePage.getContent()) {
+            for (String batchId : pagedBatchIds) {
+                // 获取该批次的所有文件
+                List<ProofFile> batchFiles = proofFileRepository.findBySubmissionBatchIdOrderByUploadTimeAsc(batchId);
+                if (batchFiles.isEmpty()) continue;
+                
+                // 使用第一个文件的信息作为批次代表
+                ProofFile firstFile = batchFiles.get(0);
+                
                 // 获取用户信息
-                UserAccount user = userAccountService.findById(proofFile.getUserAccountId());
+                UserAccount user = userAccountService.findById(firstFile.getUserAccountId());
                 if (user == null) continue;
                 
                 Map<String, Object> userInfo = new HashMap<>();
-                userInfo.put("id", proofFile.getId());
+                userInfo.put("id", firstFile.getId());  // 使用第一个文件的ID
+                userInfo.put("batchId", batchId);  // 添加批次ID
+                userInfo.put("fileCount", batchFiles.size());  // 添加文件数量
                 userInfo.put("username", user.getDisplayName() != null ? user.getDisplayName() : user.getWalletAddress());
                 userInfo.put("email", user.getWalletAddress());
                 userInfo.put("walletAddress", user.getWalletAddress());
-                userInfo.put("originalFilename", proofFile.getOriginalName());
-                userInfo.put("fileName", proofFile.getFileName());
-                userInfo.put("fileSize", proofFile.getFileSize());
-                userInfo.put("uploadTime", proofFile.getUploadTime().toString());
-                userInfo.put("auditStatus", proofFile.getAuditStatus().getDescription());
-                userInfo.put("auditTime", proofFile.getAuditTime() != null ? proofFile.getAuditTime().toString() : null);
-                userInfo.put("medalAwarded", proofFile.getMedalAwarded() != null ? proofFile.getMedalAwarded().name() : null);
-                userInfo.put("objectKey", proofFile.getFileName());
-                userInfo.put("filePath", proofFile.getFilePath());
-                userInfo.put("userAccountId", proofFile.getUserAccountId());
+                userInfo.put("originalFilename", firstFile.getOriginalName());
+                userInfo.put("fileName", firstFile.getFileName());
+                userInfo.put("fileSize", firstFile.getFileSize());
+                userInfo.put("uploadTime", firstFile.getUploadTime().toString());
+                userInfo.put("auditStatus", firstFile.getAuditStatus().getDescription());
+                userInfo.put("auditStatusCode", firstFile.getAuditStatus().name()); // 添加状态码用于前端判断
+                userInfo.put("auditTime", firstFile.getAuditTime() != null ? firstFile.getAuditTime().toString() : null);
+                userInfo.put("medalAwarded", firstFile.getMedalAwarded() != null ? firstFile.getMedalAwarded().name() : null);
+                userInfo.put("objectKey", firstFile.getFileName());
+                userInfo.put("filePath", firstFile.getFilePath());
+                userInfo.put("userAccountId", firstFile.getUserAccountId());
                 
                 users.add(userInfo);
             }
+            
+            // 计算总页数
+            int totalPages = (int) Math.ceil((double) allBatchIds.size() / limit);
             
             response.put("code", 1);
             response.put("success", true);
             response.put("message", "获取成功");
             response.put("users", users);
-            response.put("total", proofFilePage.getTotalElements());
+            response.put("total", allBatchIds.size());  // 总批次数
             response.put("currentPage", page);
-            response.put("totalPages", proofFilePage.getTotalPages());
+            response.put("totalPages", totalPages);
             
-            logger.info("成功获取{}条文件", users.size());
+            logger.info("成功获取{}个批次", users.size());
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
@@ -343,29 +476,43 @@ public class AdminController {
                 
                 // 更新相关证明文件的审核状态
                 if (proofFileId != null) {
-                    // 审核特定文件
+                    // 审核特定文件及其批次中的所有文件
                     Optional<ProofFile> proofFileOpt = proofFileRepository.findById(proofFileId);
                     if (proofFileOpt.isPresent()) {
                         ProofFile proofFile = proofFileOpt.get();
                         if (proofFile.getUserAccountId().equals(user.getId()) && 
                             proofFile.getAuditStatus() == ProofFile.AuditStatus.PENDING) {
                             
-                            proofFile.setAuditStatus(ProofFile.AuditStatus.APPROVED);
-                            proofFile.setAuditTime(LocalDateTime.now());
-                            
-                            // 设置主要勋章类型（选择数量最多的）
-                            if (goldNum != null && goldNum > 0) {
-                                proofFile.setMedalAwarded(ProofFile.MedalType.GOLD);
-                            } else if (silverNum != null && silverNum > 0) {
-                                proofFile.setMedalAwarded(ProofFile.MedalType.SILVER);
-                            } else if (bronzeNum != null && bronzeNum > 0) {
-                                proofFile.setMedalAwarded(ProofFile.MedalType.BRONZE);
+                            // 获取该批次的所有文件
+                            List<ProofFile> batchFiles = new ArrayList<>();
+                            if (proofFile.getSubmissionBatchId() != null) {
+                                batchFiles = proofFileRepository.findBySubmissionBatchIdOrderByUploadTimeAsc(
+                                    proofFile.getSubmissionBatchId());
+                                logger.info("审核批次 {}, 包含 {} 个文件", proofFile.getSubmissionBatchId(), batchFiles.size());
+                            } else {
+                                // 兼容旧数据
+                                batchFiles.add(proofFile);
                             }
                             
-                            proofFile.setMedalAwardTime(LocalDateTime.now());
-                            proofFileRepository.save(proofFile);
+                            // 更新批次中所有文件的审核状态
+                            for (ProofFile file : batchFiles) {
+                                file.setAuditStatus(ProofFile.AuditStatus.APPROVED);
+                                file.setAuditTime(LocalDateTime.now());
+                                
+                                // 设置主要勋章类型（选择数量最多的）
+                                if (goldNum != null && goldNum > 0) {
+                                    file.setMedalAwarded(ProofFile.MedalType.GOLD);
+                                } else if (silverNum != null && silverNum > 0) {
+                                    file.setMedalAwarded(ProofFile.MedalType.SILVER);
+                                } else if (bronzeNum != null && bronzeNum > 0) {
+                                    file.setMedalAwarded(ProofFile.MedalType.BRONZE);
+                                }
+                                
+                                file.setMedalAwardTime(LocalDateTime.now());
+                                proofFileRepository.save(file);
+                            }
                             
-                            logger.info("审核通过: 文件ID={}, 用户={}", proofFileId, username);
+                            logger.info("审核通过: 批次中的 {} 个文件已全部审核通过", batchFiles.size());
                         } else {
                             logger.warn("文件ID={}不属于用户{}或已审核", proofFileId, username);
                         }
@@ -405,18 +552,32 @@ public class AdminController {
             } else {
                 // 审核拒绝
                 if (proofFileId != null) {
-                    // 拒绝特定文件
+                    // 拒绝特定文件及其批次中的所有文件
                     Optional<ProofFile> proofFileOpt = proofFileRepository.findById(proofFileId);
                     if (proofFileOpt.isPresent()) {
                         ProofFile proofFile = proofFileOpt.get();
                         if (proofFile.getUserAccountId().equals(user.getId()) && 
                             proofFile.getAuditStatus() == ProofFile.AuditStatus.PENDING) {
                             
-                            proofFile.setAuditStatus(ProofFile.AuditStatus.REJECTED);
-                            proofFile.setAuditTime(LocalDateTime.now());
-                            proofFileRepository.save(proofFile);
+                            // 获取该批次的所有文件
+                            List<ProofFile> batchFiles = new ArrayList<>();
+                            if (proofFile.getSubmissionBatchId() != null) {
+                                batchFiles = proofFileRepository.findBySubmissionBatchIdOrderByUploadTimeAsc(
+                                    proofFile.getSubmissionBatchId());
+                                logger.info("拒绝批次 {}, 包含 {} 个文件", proofFile.getSubmissionBatchId(), batchFiles.size());
+                            } else {
+                                // 兼容旧数据
+                                batchFiles.add(proofFile);
+                            }
                             
-                            logger.info("审核拒绝: 文件ID={}, 用户={}", proofFileId, username);
+                            // 更新批次中所有文件的审核状态
+                            for (ProofFile file : batchFiles) {
+                                file.setAuditStatus(ProofFile.AuditStatus.REJECTED);
+                                file.setAuditTime(LocalDateTime.now());
+                                proofFileRepository.save(file);
+                            }
+                            
+                            logger.info("审核拒绝: 批次中的 {} 个文件已全部拒绝", batchFiles.size());
                         } else {
                             logger.warn("文件ID={}不属于用户{}或已审核", proofFileId, username);
                         }
@@ -535,6 +696,32 @@ public class AdminController {
                 return ResponseEntity.status(404).body(response);
             }
             
+            // 获取该批次的所有证明文件
+            List<ProofFile> batchFiles = new ArrayList<>();
+            if (proofFile.getSubmissionBatchId() != null) {
+                batchFiles = proofFileRepository.findBySubmissionBatchIdOrderByUploadTimeAsc(
+                    proofFile.getSubmissionBatchId());
+                logger.info("该提交包含 {} 个证明文件", batchFiles.size());
+            } else {
+                // 兼容旧数据（没有批次ID）
+                batchFiles.add(proofFile);
+            }
+            
+            // 构建证明文件列表
+            List<Map<String, Object>> proofFilesList = new ArrayList<>();
+            for (ProofFile file : batchFiles) {
+                Map<String, Object> fileInfo = new HashMap<>();
+                fileInfo.put("id", file.getId());
+                fileInfo.put("fileName", file.getFileName());
+                fileInfo.put("originalFilename", file.getOriginalName());
+                fileInfo.put("fileType", file.getFileType());
+                fileInfo.put("fileSize", file.getFileSize());
+                fileInfo.put("filePath", file.getFilePath());
+                fileInfo.put("objectKey", file.getFileName());
+                fileInfo.put("downloadUrl", "http://localhost:5000/api/admin/download/" + file.getFileName());
+                proofFilesList.add(fileInfo);
+            }
+            
             // 查找关联的NFT图片（如果有）
             List<com.brokerwallet.entity.NftImage> userNftImages = nftImageRepository.findByUserAccountIdOrderByUploadTimeDesc(user.getId());
             Map<String, Object> nftImageInfo = null;
@@ -594,7 +781,29 @@ public class AdminController {
             materialDetail.put("filePath", proofFile.getFilePath());
             materialDetail.put("uploadTime", proofFile.getUploadTime().toString());
             materialDetail.put("auditStatus", proofFile.getAuditStatus().getDescription());
+            materialDetail.put("auditStatusCode", proofFile.getAuditStatus().name()); // 添加状态码（PENDING/APPROVED/REJECTED）
             materialDetail.put("objectKey", proofFile.getFileName());
+            
+            // 审核详细信息
+            if (proofFile.getAuditTime() != null) {
+                materialDetail.put("auditTime", proofFile.getAuditTime().toString());
+            }
+            if (proofFile.getMedalAwarded() != null) {
+                materialDetail.put("medalAwarded", proofFile.getMedalAwarded().name());
+                materialDetail.put("medalAwardedDesc", proofFile.getMedalAwarded().getDescription());
+            }
+            if (proofFile.getMedalAwardTime() != null) {
+                materialDetail.put("medalAwardTime", proofFile.getMedalAwardTime().toString());
+            }
+            // Token转账金额（如果有）
+            if (proofFile.getTokenReward() != null) {
+                // 转换为wei（BigDecimal已经是wei单位）
+                materialDetail.put("tokenAmount", proofFile.getTokenReward().toString());
+            }
+            // Token转账交易哈希
+            if (proofFile.getTokenRewardTxHash() != null) {
+                materialDetail.put("tokenTransferTxHash", proofFile.getTokenRewardTxHash());
+            }
             
             // 用户信息
             materialDetail.put("userAccountId", user.getId());  // ⭐ 添加用户账户ID
@@ -612,6 +821,11 @@ public class AdminController {
             
             // NFT图片信息
             materialDetail.put("nftImage", nftImageInfo);
+            
+            // 批次信息
+            materialDetail.put("submissionBatchId", proofFile.getSubmissionBatchId());
+            materialDetail.put("proofFiles", proofFilesList);  // 该批次的所有证明文件
+            materialDetail.put("proofFileCount", batchFiles.size());  // 证明文件数量
             
             response.put("success", true);
             response.put("data", materialDetail);
@@ -1385,6 +1599,266 @@ public class AdminController {
             logger.error("获取统计信息失败", e);
             response.put("success", false);
             response.put("message", "获取统计信息失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 按花名查询用户
+     */
+    @GetMapping("/search-by-display-name")
+    public ResponseEntity<Map<String, Object>> searchByDisplayName(@RequestParam String displayName) {
+        Map<String, Object> response = new HashMap<>();
+        
+        logger.info("按花名查询用户: {}", displayName);
+        
+        try {
+            // 使用模糊查询
+            List<UserAccount> users = userAccountRepository.findByDisplayNameContainingIgnoreCase(displayName);
+            
+            if (users.isEmpty()) {
+                response.put("success", false);
+                response.put("message", "未找到使用该花名的用户");
+                return ResponseEntity.ok(response);
+            }
+            
+            // 构建返回数据
+            List<Map<String, Object>> userList = new ArrayList<>();
+            for (UserAccount user : users) {
+                Map<String, Object> userInfo = new HashMap<>();
+                userInfo.put("walletAddress", user.getWalletAddress());
+                userInfo.put("displayName", user.getDisplayName());
+                userInfo.put("goldMedals", user.getGoldMedals());
+                userInfo.put("silverMedals", user.getSilverMedals());
+                userInfo.put("bronzeMedals", user.getBronzeMedals());
+                userInfo.put("totalMedals", user.getTotalMedals());
+                userInfo.put("representativeWork", user.getRepresentativeWork());
+                userInfo.put("showRepresentativeWork", user.getShowRepresentativeWork());
+                userInfo.put("adminApprovedDisplay", user.getAdminApprovedDisplay());
+                userList.add(userInfo);
+            }
+            
+            response.put("success", true);
+            response.put("count", users.size());
+            response.put("users", userList);
+            
+            logger.info("找到 {} 个使用花名 '{}' 的用户", users.size(), displayName);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("按花名查询失败", e);
+            response.put("success", false);
+            response.put("message", "查询失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 查询管理员代币余额
+     */
+    @GetMapping("/check-token-balance")
+    public ResponseEntity<Map<String, Object>> checkTokenBalance() {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            String adminAddress = blockchainService.getAccountAddress();
+            java.math.BigInteger balance = blockchainService.getTokenBalance(adminAddress);
+            java.math.BigInteger balanceInToken = balance.divide(java.math.BigInteger.TEN.pow(18));
+            
+            response.put("success", true);
+            response.put("address", adminAddress);
+            response.put("balanceWei", balance.toString());
+            response.put("balanceToken", balanceInToken.toString());
+            
+            logger.info("管理员代币余额: {} Token ({} wei)", balanceInToken, balance);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("查询余额失败", e);
+            response.put("success", false);
+            response.put("message", "查询余额失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 管理员转账代币奖励
+     */
+    @PostMapping("/transfer-reward")
+    public ResponseEntity<Map<String, Object>> transferReward(@RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        logger.info("📥 收到转账奖励请求: {}", request);
+        
+        try {
+            String toAddress = request.get("toAddress").toString();
+            String amount = request.get("amount").toString();
+            
+            logger.info("🔍 转账奖励: 接收地址={}, 金额={} wei", toAddress, amount);
+            
+            // 调用区块链服务转账
+            String txHash = blockchainService.transferTokenReward(toAddress, amount);
+            
+            logger.info("✅ 转账成功: txHash={}", txHash);
+            
+            response.put("success", true);
+            response.put("message", "转账成功");
+            response.put("transactionHash", txHash);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("❌ 转账失败", e);
+            response.put("success", false);
+            response.put("message", "转账失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 生成默认样式NFT图片（使用contract项目的样式）
+     */
+    @PostMapping("/generate-default-nft-image")
+    public ResponseEntity<Map<String, Object>> generateDefaultNftImage(@RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        logger.info("📥 收到生成默认NFT图片请求: {}", request);
+        
+        try {
+            String authorInfo = request.get("authorInfo").toString();
+            String eventType = request.get("eventType").toString();
+            String eventDescription = request.get("eventDescription").toString();
+            String contributionLevel = request.get("contributionLevel").toString();
+            String timestamp = request.get("timestamp").toString();
+            
+            logger.info("生成默认NFT图片: 作者={}, 事件类型={}, 贡献等级={}", 
+                authorInfo, eventType, contributionLevel);
+            
+            // 调用图片生成器
+            String imageBase64 = medalImageGenerator.generateMedalImage(
+                authorInfo, eventType, eventDescription, contributionLevel, timestamp
+            );
+            
+            if (imageBase64 != null && !imageBase64.isEmpty()) {
+                logger.info("✅ 默认NFT图片生成成功，Base64长度: {}", imageBase64.length());
+                
+                // 添加data URL前缀，方便前端和手机端使用
+                String dataUrl = "data:image/jpeg;base64," + imageBase64;
+                
+                response.put("success", true);
+                response.put("message", "图片生成成功");
+                response.put("imageData", dataUrl); // 返回完整的data URL
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "图片生成失败");
+                return ResponseEntity.status(500).body(response);
+            }
+            
+        } catch (Exception e) {
+            logger.error("❌ 生成默认NFT图片失败", e);
+            response.put("success", false);
+            response.put("message", "生成失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 保存代币奖励到数据库
+     */
+    @PostMapping("/save-token-reward")
+    public ResponseEntity<Map<String, Object>> saveTokenReward(@RequestBody Map<String, Object> request) {
+        Map<String, Object> response = new HashMap<>();
+        
+        logger.info("📥 收到保存代币奖励请求: {}", request);
+        
+        try {
+            Long proofFileId = Long.valueOf(request.get("proofFileId").toString());
+            Number tokenRewardNum = (Number) request.get("tokenReward");
+            String txHash = request.get("txHash").toString();
+            
+            // 转换为BigDecimal
+            java.math.BigDecimal tokenReward = new java.math.BigDecimal(tokenRewardNum.toString());
+            
+            logger.info("保存代币奖励: proofFileId={}, tokenReward={} BKC, txHash={}", 
+                proofFileId, tokenReward, txHash);
+            
+            // 查找证明文件
+            Optional<ProofFile> proofFileOpt = proofFileRepository.findById(proofFileId);
+            if (proofFileOpt.isPresent()) {
+                ProofFile proofFile = proofFileOpt.get();
+                proofFile.setTokenReward(tokenReward);
+                proofFile.setTokenRewardTxHash(txHash);
+                proofFileRepository.save(proofFile);
+                
+                logger.info("✅ 代币奖励已保存到数据库");
+                
+                response.put("success", true);
+                response.put("message", "代币奖励已保存");
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "证明文件不存在");
+                return ResponseEntity.status(404).body(response);
+            }
+            
+        } catch (Exception e) {
+            logger.error("❌ 保存代币奖励失败", e);
+            response.put("success", false);
+            response.put("message", "保存失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 获取用户信息（花名、代表作、是否展示代表作）
+     * 供手机端证明提交界面使用
+     */
+    @GetMapping("/user/info/{walletAddress}")
+    public ResponseEntity<Map<String, Object>> getUserInfo(@PathVariable String walletAddress) {
+        Map<String, Object> response = new HashMap<>();
+        
+        logger.info("查询用户信息: {}", walletAddress);
+        
+        try {
+            // 标准化地址（移除0x前缀）
+            String normalizedAddress = walletAddress.toLowerCase();
+            if (normalizedAddress.startsWith("0x")) {
+                normalizedAddress = normalizedAddress.substring(2);
+            }
+            
+            // 查询用户
+            Optional<UserAccount> userOpt = userAccountRepository.findByWalletAddress(normalizedAddress);
+            
+            if (userOpt.isPresent()) {
+                UserAccount user = userOpt.get();
+                
+                Map<String, Object> data = new HashMap<>();
+                data.put("walletAddress", user.getWalletAddress());
+                data.put("displayName", user.getDisplayName() != null ? user.getDisplayName() : "");
+                data.put("representativeWork", user.getRepresentativeWork() != null ? user.getRepresentativeWork() : "");
+                data.put("showRepresentativeWork", user.getShowRepresentativeWork() != null ? user.getShowRepresentativeWork() : false);
+                
+                response.put("success", true);
+                response.put("data", data);
+                
+                logger.info("找到用户信息: 花名={}, 代表作={}, 展示={}", 
+                    user.getDisplayName(), user.getRepresentativeWork(), user.getShowRepresentativeWork());
+                
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("success", false);
+                response.put("message", "用户不存在");
+                logger.info("用户不存在: {}", walletAddress);
+                return ResponseEntity.ok(response);
+            }
+            
+        } catch (Exception e) {
+            logger.error("查询用户信息失败", e);
+            response.put("success", false);
+            response.put("message", "查询失败: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }

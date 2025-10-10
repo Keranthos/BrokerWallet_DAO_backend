@@ -104,6 +104,11 @@ public interface ProofFileRepository extends JpaRepository<ProofFile, Long> {
     Page<ProofFile> findByAuditStatus(ProofFile.AuditStatus auditStatus, Pageable pageable);
     
     /**
+     * 根据多个审核状态查找文件（分页）
+     */
+    Page<ProofFile> findByAuditStatusIn(List<ProofFile.AuditStatus> auditStatuses, Pageable pageable);
+    
+    /**
      * 根据用户ID和审核状态查找文件
      */
     List<ProofFile> findByUserAccountIdAndAuditStatus(Long userAccountId, ProofFile.AuditStatus auditStatus);
@@ -117,5 +122,35 @@ public interface ProofFileRepository extends JpaRepository<ProofFile, Long> {
      * 根据勋章类型查找文件
      */
     List<ProofFile> findByMedalAwarded(ProofFile.MedalType medalType);
+    
+    /**
+     * 根据NFT图片哈希查找文件（用于检查NFT图片唯一性）
+     */
+    Optional<ProofFile> findByNftImageHash(String nftImageHash);
+    
+    /**
+     * 检查NFT图片哈希是否已存在
+     */
+    boolean existsByNftImageHash(String nftImageHash);
+    
+    /**
+     * 根据提交批次ID查找文件列表
+     */
+    List<ProofFile> findBySubmissionBatchIdOrderByUploadTimeAsc(String submissionBatchId);
+    
+    /**
+     * 查找所有待审核的批次（按批次分组，返回批次ID列表）
+     * 使用子查询来实现按时间排序
+     */
+    @Query("SELECT p.submissionBatchId FROM ProofFile p WHERE p.auditStatus = :auditStatus AND p.submissionBatchId IS NOT NULL " +
+           "GROUP BY p.submissionBatchId ORDER BY MAX(p.uploadTime) DESC")
+    List<String> findDistinctBatchIdsByAuditStatus(@Param("auditStatus") ProofFile.AuditStatus auditStatus);
+    
+    /**
+     * 查找所有批次（不区分审核状态，按时间倒序）
+     */
+    @Query("SELECT p.submissionBatchId FROM ProofFile p WHERE p.submissionBatchId IS NOT NULL " +
+           "GROUP BY p.submissionBatchId ORDER BY MAX(p.uploadTime) DESC")
+    List<String> findAllDistinctBatchIds();
 }
 

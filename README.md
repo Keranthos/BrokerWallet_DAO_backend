@@ -2,284 +2,472 @@
 
 ## 📱 项目简介
 
-BrokerWallet后端服务是为BrokerWallet勋章系统提供的本地服务器解决方案。当您暂时没有云端服务器时，可以将电脑作为服务器，通过USB连接手机，为BrokerWallet应用提供以下功能：
+BrokerWallet后端服务是一个基于Spring Boot的区块链应用后端，为BrokerWallet DAO系统提供以下功能：
 
-- 🏆 **证明材料上传**：支持用户上传各种格式的证明文件
-- 🎨 **NFT图片铸造**：支持用户上传图片并进行NFT铸造
-- 💾 **数据库管理**：使用MySQL数据库存储文件信息和用户数据
-- 📁 **文件系统管理**：本地文件系统存储和管理上传的文件
+- 🏆 **勋章管理**：用户勋章发放、查询、排行榜
+- 🎨 **NFT铸造**：支持用户上传图片并铸造NFT
+- 📋 **材料审核**：证明材料上传、审核、批次管理
+- 🔗 **区块链交互**：与BrokerChain节点通信，调用智能合约
+- 💾 **数据存储**：MySQL数据库 + 本地文件系统
+- 🖼️ **图片处理**：图片压缩、缩略图生成、Base64编码
+
+---
 
 ## 🚀 快速开始
 
 ### 环境要求
 
-- ☕ **Java 17** 或更高版本
-- 🗄️ **MySQL 8.0** 或更高版本
-- 🔧 **Maven 3.6** 或更高版本
-- 🖥️ **Windows 10/11** (其他操作系统也支持)
+- ☕ **Java 17+** (OpenJDK或Oracle JDK)
+- 🗄️ **MySQL 8.0+**
+- 🔧 **Maven 3.8+**
+- 🔗 **BrokerChain节点** (或连接到已有节点)
 
-### 安装步骤
+---
 
-#### 1. 准备数据库
+### 方式1：自动创建数据库表（推荐）
 
-1. 启动MySQL服务
-2. 使用Navicat或命令行连接MySQL
-3. 执行数据库初始化脚本：
+**适用于首次部署或快速测试**
 
+#### 1. 创建空数据库
 ```sql
--- 在MySQL中执行
-source C:/Users/wanweijie/Desktop/BrokerWallet-backend/database/init.sql
+-- 登录MySQL
+mysql -u root -p
+
+-- 创建数据库
+CREATE DATABASE IF NOT EXISTS `brokerwallet` 
+CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
+
+-- 退出
+EXIT;
 ```
 
-或者直接在Navicat中打开并执行 `database/init.sql` 文件。
-
 #### 2. 配置数据库连接
-
-编辑 `src/main/resources/application.yml` 文件，修改数据库连接信息：
+编辑 `src/main/resources/application.yml`：
 
 ```yaml
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/brokerwallet?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
-    password: 你的MySQL密码  # 请修改为您的实际密码
+    password: YOUR_PASSWORD  # 修改为您的MySQL密码
+  
+  jpa:
+    hibernate:
+      ddl-auto: update  # JPA自动创建/更新表结构
 ```
 
 #### 3. 启动服务
-
-在项目根目录下执行：
-
 ```bash
-# 使用Maven启动
+# JPA会自动创建所有表
 mvn spring-boot:run
-
-# 或者先编译再运行
-mvn clean package
-java -jar target/backend-1.0.0.jar
 ```
 
-#### 4. 验证服务
+**优点：**
+- ✅ 零配置，自动创建表
+- ✅ 代码改动时自动更新表结构
+- ✅ 适合开发和测试
 
-服务启动后，访问以下地址验证：
-
-- 🏥 **健康检查**: http://localhost:5000/api/health
-- 📋 **服务器信息**: http://localhost:5000/api/server/info
-- 📖 **API文档**: http://localhost:5000/api/docs
-
-## 📱 Android应用配置
-
-### 修改服务器地址
-
-在Android项目中找到 `ServerConfig.java` 文件，修改服务器地址：
-
-```java
-// 文件位置: app/src/main/java/com/example/brokerfi/config/ServerConfig.java
-
-public static final String SERVER_HOST = "你的电脑IP地址"; // 例如: "192.168.1.100"
-public static final int SERVER_PORT = 5000;
-```
-
-### 获取电脑IP地址
-
-#### Windows系统：
-```cmd
-ipconfig
-```
-查找 "无线局域网适配器 WLAN" 或 "以太网适配器" 下的 IPv4 地址。
-
-#### 或者查看服务器信息：
-访问 http://localhost:5000/api/server/info 获取服务器IP地址。
-
-### USB连接配置
-
-1. 📱 **启用USB调试**：在Android手机的开发者选项中启用USB调试
-2. 🔌 **连接USB线**：使用USB线连接手机和电脑
-3. 🌐 **端口转发**（如果需要）：
-   ```bash
-   adb forward tcp:5000 tcp:5000
-   ```
-
-## 🔧 API接口文档
-
-### 证明文件相关
-
-| 接口 | 方法 | 描述 |
-|------|------|------|
-| `/api/proof/upload` | POST | 上传证明文件 |
-| `/api/proof/list` | GET | 获取证明文件列表 |
-| `/api/proof/detail/{id}` | GET | 获取证明文件详情 |
-| `/api/proof/download/{id}` | GET | 下载证明文件 |
-| `/api/proof/delete/{id}` | DELETE | 删除证明文件 |
-| `/api/proof/search` | GET | 搜索证明文件 |
-| `/api/proof/statistics` | GET | 获取文件统计信息 |
-
-### NFT图片相关
-
-| 接口 | 方法 | 描述 |
-|------|------|------|
-| `/api/nft/upload` | POST | 上传NFT图片 |
-| `/api/nft/mint` | POST | NFT铸造 |
-| `/api/nft/list` | GET | 获取NFT图片列表 |
-| `/api/nft/detail/{id}` | GET | 获取NFT图片详情 |
-| `/api/nft/view/{id}` | GET | 查看NFT图片 |
-| `/api/nft/statistics` | GET | 获取NFT统计信息 |
-
-### 系统相关
-
-| 接口 | 方法 | 描述 |
-|------|------|------|
-| `/api/health` | GET | 系统健康检查 |
-| `/api/server/info` | GET | 获取服务器信息 |
-| `/api/test` | GET | 测试连接 |
-| `/api/docs` | GET | 获取API文档 |
-
-## 💡 使用示例
-
-### 上传证明文件
-
-```bash
-curl -X POST \
-  -F "file=@证明文件.pdf" \
-  -F "userId=user123" \
-  http://localhost:5000/api/proof/upload
-```
-
-### 上传NFT图片
-
-```bash
-curl -X POST \
-  -F "file=@图片.jpg" \
-  -F "nftName=我的NFT" \
-  -F "nftDescription=这是我的第一个NFT" \
-  -F "userId=user123" \
-  http://localhost:5000/api/nft/upload
-```
-
-### NFT铸造
-
-```bash
-curl -X POST \
-  -d "imageId=1&shares=100" \
-  http://localhost:5000/api/nft/mint
-```
-
-## 📁 文件存储结构
-
-```
-uploads/
-├── proofs/           # 证明文件
-│   └── 2024/01/15/   # 按日期分类
-├── nft-images/       # NFT图片
-│   └── 2024/01/15/   # 按日期分类
-└── thumbnails/       # 缩略图
-    └── 2024/01/15/   # 按日期分类
-```
-
-## 🗄️ 数据库表结构
-
-### proof_files（证明文件表）
-- `id`: 主键
-- `file_name`: 文件名
-- `original_name`: 原始文件名
-- `file_type`: 文件类型
-- `file_size`: 文件大小
-- `file_path`: 存储路径
-- `upload_time`: 上传时间
-- `user_id`: 用户ID
-- `status`: 文件状态
-
-### nft_images（NFT图片表）
-- `id`: 主键
-- `image_name`: 图片名
-- `nft_name`: NFT名称
-- `nft_description`: NFT描述
-- `image_type`: 图片类型
-- `image_size`: 图片大小
-- `mint_status`: 铸造状态
-- `transaction_hash`: 交易哈希
-- `token_id`: Token ID
-
-## 🔍 故障排除
-
-### 常见问题
-
-1. **数据库连接失败**
-   - 检查MySQL服务是否启动
-   - 验证数据库连接信息是否正确
-   - 确认数据库已创建
-
-2. **文件上传失败**
-   - 检查uploads目录权限
-   - 验证文件大小是否超过限制（50MB）
-   - 确认文件类型是否支持
-
-3. **手机无法连接**
-   - 确认电脑和手机在同一网络
-   - 检查防火墙设置
-   - 验证IP地址配置
-
-4. **端口被占用**
-   ```bash
-   # Windows查看端口占用
-   netstat -ano | findstr :5000
-   
-   # 结束占用进程
-   taskkill /PID <进程ID> /F
-   ```
-
-### 日志查看
-
-- 应用日志位置：`logs/brokerwallet-backend.log`
-- 控制台实时日志：服务启动时可以看到
-- 日志级别：DEBUG（开发环境）
-
-## 🛠️ 开发说明
-
-### 项目结构
-
-```
-src/
-├── main/
-│   ├── java/
-│   │   └── com/brokerwallet/
-│   │       ├── config/          # 配置类
-│   │       ├── controller/      # 控制器
-│   │       ├── entity/          # 实体类
-│   │       ├── repository/      # 数据访问层
-│   │       ├── service/         # 服务层
-│   │       └── util/            # 工具类
-│   └── resources/
-│       ├── application.yml      # 配置文件
-│       └── static/             # 静态资源
-└── test/                       # 测试代码
-```
-
-### 技术栈
-
-- **Spring Boot 3.2.0**: Web框架
-- **Spring Data JPA**: 数据访问
-- **MySQL 8.0**: 数据库
-- **Maven**: 项目管理
-- **SLF4J + Logback**: 日志框架
-
-## 📄 许可证
-
-本项目采用 MIT 许可证。详情请参阅 [LICENSE](LICENSE) 文件。
-
-## 🤝 贡献
-
-欢迎提交Issue和Pull Request来帮助改进这个项目！
-
-## 📞 支持
-
-如果您在使用过程中遇到问题，请：
-
-1. 查看本文档的故障排除部分
-2. 检查日志文件获取详细错误信息
-3. 访问 http://localhost:5000/api/health 检查服务状态
-4. 提交Issue描述问题详情
+**注意：**
+- ⚠️ 生产环境建议使用方式2（更可控）
 
 ---
 
-🎉 **祝您使用愉快！** 如果这个项目对您有帮助，请给个⭐️支持一下！
+### 方式2：使用SQL脚本创建（生产推荐）
 
+**适用于生产环境或需要精确控制表结构**
+
+#### 1. 执行初始化脚本
+```bash
+cd database
+
+# 方式1：命令行执行
+mysql -u root -p < init.sql
+
+# 方式2：MySQL客户端执行
+# 打开MySQL Workbench/Navicat
+# 连接到localhost
+# 打开并执行 init.sql
+```
+
+#### 2. 修改JPA配置（可选）
+编辑 `application.yml`：
+
+```yaml
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate  # 仅验证表结构，不自动修改
+      # 或 ddl-auto: none  # 完全不操作表结构
+```
+
+#### 3. 启动服务
+```bash
+mvn spring-boot:run
+```
+
+**优点：**
+- ✅ 完全掌控表结构
+- ✅ 包含所有索引和优化
+- ✅ 适合生产环境
+
+---
+
+### 配置区块链连接
+
+编辑 `blockchain-config.yml`：
+
+```yaml
+blockchain:
+  rpc:
+    url: "http://127.0.0.1:8545"  # BrokerChain RPC地址
+  
+  account:
+    address: "0xYOUR_BACKEND_ADDRESS"     # 后端账户地址
+    private-key: "YOUR_PRIVATE_KEY"      # 后端账户私钥
+  
+  contracts:
+    medal-nft:
+      address: "0xYOUR_MEDAL_CONTRACT"   # 勋章合约地址
+    
+    nft-minter:
+      address: "0xYOUR_NFT_CONTRACT"     # NFT铸造合约地址
+```
+
+**重要提示：**
+- 后端账户需要有足够的BKC余额
+- 后端账户需要被授予NFT铸造权限
+
+---
+
+### 配置服务器URL（可选）
+
+如果需要手机或远程访问，编辑 `application.yml`：
+
+```yaml
+brokerwallet:
+  server:
+    # 本地开发
+    url: "http://localhost:5000"
+    
+    # USB调试（使用电脑内网IP）
+    # url: "http://192.168.1.100:5000"
+    
+    # 云服务器部署
+    # url: "http://your-domain.com:5000"
+```
+
+**获取电脑IP：**
+```bash
+# Windows
+ipconfig
+
+# Linux/Mac
+ifconfig
+```
+
+---
+
+### 启动服务
+
+#### 方式1：使用Maven
+```bash
+mvn spring-boot:run
+```
+
+#### 方式2：使用批处理（Windows）
+```bash
+start-server.bat
+```
+
+#### 方式3：打包运行
+```bash
+mvn clean package
+java -jar target/brokerwallet-backend-1.0.0.jar
+```
+
+---
+
+### 验证部署
+
+#### 1. 检查服务状态
+```bash
+# 测试基础连接
+curl http://localhost:5000/api/test
+
+# 检查区块链连接
+curl http://localhost:5000/api/blockchain/health
+
+# 查看账户状态
+curl http://localhost:5000/api/admin/account-status
+```
+
+#### 2. 检查数据库
+```sql
+USE brokerwallet;
+SHOW TABLES;
+
+-- 应该看到3个表：
+-- user_accounts
+-- proof_files
+-- nft_images
+```
+
+#### 3. 查看日志
+```bash
+tail -f logs/brokerwallet-backend.log
+```
+
+---
+
+## 📁 项目结构
+
+```
+BrokerWallet-backend/
+├── src/main/java/com/brokerwallet/
+│   ├── controller/          # REST API控制器
+│   │   ├── AdminController.java          # 管理员接口
+│   │   ├── FileUploadController.java     # 文件上传
+│   │   ├── BlockchainController.java     # 区块链查询
+│   │   └── ...
+│   ├── service/             # 业务逻辑层
+│   │   ├── BlockchainService.java        # 区块链交互
+│   │   ├── MedalService.java             # 勋章管理
+│   │   ├── FileStorageService.java       # 文件存储
+│   │   └── ImageProcessingService.java   # 图片处理
+│   ├── entity/              # JPA实体类
+│   │   ├── ProofFile.java                # 证明文件
+│   │   ├── NftImage.java                 # NFT图片
+│   │   └── UserInfo.java                 # 用户信息
+│   ├── repository/          # 数据访问层
+│   ├── dto/                 # 数据传输对象
+│   └── util/                # 工具类
+├── src/main/resources/
+│   └── application.yml      # 应用配置
+├── contracts/               # 智能合约
+│   ├── MedalNFT.sol
+│   ├── OptimizedNftMinter.sol
+│   └── README.md
+├── database/                # 数据库脚本
+│   ├── init.sql                          # 初始化脚本
+│   └── FINAL_SCHEMA.md                   # 数据库文档
+├── uploads/                 # 用户上传文件
+│   ├── proofs/              # 证明材料
+│   ├── nft-images/          # NFT图片
+│   └── thumbnails/          # 缩略图
+├── logs/                    # 应用日志
+├── blockchain-config.yml    # 区块链配置
+└── pom.xml                  # Maven配置
+```
+
+---
+
+## 🔧 核心API接口
+
+### 管理员接口
+
+| 接口 | 方法 | 描述 |
+|------|------|------|
+| `/api/admin/pending` | GET | 获取待审核材料 |
+| `/api/admin/approved` | GET | 获取已审核材料 |
+| `/api/admin/all` | GET | 获取所有材料 |
+| `/api/admin/review` | POST | 审核材料并分配勋章 |
+| `/api/admin/material/{id}` | GET | 获取材料详情 |
+| `/api/admin/account-status` | GET | 获取后端账户状态 |
+
+### 区块链接口
+
+| 接口 | 方法 | 描述 |
+|------|------|------|
+| `/api/blockchain/medals/{address}` | GET | 查询用户勋章 |
+| `/api/blockchain/nft/user/{address}` | GET | 查询用户NFT |
+| `/api/blockchain/nft/all` | GET | 查询所有NFT |
+| `/api/blockchain/ranking` | GET | 获取勋章排行榜 |
+| `/api/blockchain/health` | GET | 检查区块链连接 |
+
+### 文件上传接口
+
+| 接口 | 方法 | 描述 |
+|------|------|------|
+| `/api/upload/proof` | POST | 上传证明材料 |
+| `/api/upload/complete` | POST | 完成批次提交 |
+| `/api/upload/submissions/{address}` | GET | 获取提交历史 |
+| `/api/upload/user-info/{address}` | GET | 获取用户信息 |
+| `/api/upload/file/{fileName}` | GET | 下载文件 |
+
+---
+
+## 💾 数据库表结构
+
+### user_accounts（用户账户表）
+- 存储用户基本信息
+- 勋章统计（金、银、铜）
+- 代表作展示设置
+- 区块链同步状态
+
+### proof_files（证明文件表）
+- 文件基本信息
+- 审核状态和勋章发放
+- **批次提交支持**（`submission_batch_id`）
+- **NFT唯一性约束**（`nft_image_hash`）
+- 代币奖励信息
+
+### nft_images（NFT图片表）
+- 图片基本信息
+- NFT铸造状态
+- 区块链交易信息
+- Base64数据存储
+
+详细结构请参考 `database/FINAL_SCHEMA.md`
+
+---
+
+## 🔍 故障排除
+
+### 1. 数据库连接失败
+
+**错误：** `Communications link failure` 或 `Access denied`
+
+**解决：**
+```bash
+# 检查MySQL服务
+# Windows
+net start MySQL80
+
+# Linux
+sudo systemctl status mysql
+
+# 验证密码
+mysql -u root -p
+
+# 检查数据库是否存在
+SHOW DATABASES;
+```
+
+### 2. 区块链连接失败
+
+**错误：** `Connection refused` 或 `Unable to connect`
+
+**解决：**
+```bash
+# 检查节点是否运行
+curl http://127.0.0.1:8545
+
+# 验证RPC地址
+# 编辑 blockchain-config.yml
+
+# 查看节点日志
+```
+
+### 3. NFT铸造权限不足
+
+**错误：** `Not authorized to mint NFT`
+
+**解决：**
+```bash
+# 使用合约部署者账户授予权限
+cd ../contract
+npx hardhat run scripts/grant-nft-permission.js --network brokerchain
+
+# 或在管理后台"账户状态"页面操作
+```
+
+### 4. 文件上传失败
+
+**错误：** `File too large` 或 `Directory not found`
+
+**解决：**
+```yaml
+# 编辑 application.yml
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB  # 增加限制
+
+# 检查uploads目录权限
+mkdir -p uploads/proofs uploads/nft-images uploads/thumbnails
+```
+
+### 5. 表结构不匹配
+
+**错误：** `Unknown column` 或 `Table doesn't exist`
+
+**解决：**
+```bash
+# 方案1：重新执行初始化脚本
+mysql -u root -p < database/init.sql
+
+# 方案2：使用JPA自动更新
+# application.yml: ddl-auto: update
+
+# 方案3：手动添加缺失字段
+ALTER TABLE proof_files ADD COLUMN nft_image_hash VARCHAR(64);
+ALTER TABLE proof_files ADD COLUMN submission_batch_id VARCHAR(100);
+```
+
+---
+
+## 📚 相关文档
+
+- **完整部署指南：** `../DEPLOYMENT_GUIDE.md`
+- **项目结构说明：** `../PROJECT_STRUCTURE.md`
+- **数据库详细设计：** `database/FINAL_SCHEMA.md`
+- **智能合约说明：** `contracts/README.md`
+- **配置参考：** `../配置说明-服务器地址.md`
+
+---
+
+## 🛠️ 技术栈
+
+- **Spring Boot 2.7.x** - Web框架
+- **Spring Data JPA** - ORM框架
+- **MySQL 8.0** - 关系数据库
+- **Web3j 4.9.x** - 区块链交互
+- **Maven 3.8+** - 项目管理
+- **Lombok** - 简化代码
+- **SLF4J + Logback** - 日志系统
+
+---
+
+## 📝 开发说明
+
+### 添加新功能
+
+1. 在 `entity` 包创建实体类
+2. 在 `repository` 包创建Repository接口
+3. 在 `service` 包实现业务逻辑
+4. 在 `controller` 包暴露REST API
+5. 更新 `init.sql` 脚本（如果修改了表结构）
+
+### 调试技巧
+
+```yaml
+# application.yml
+logging:
+  level:
+    com.brokerwallet: DEBUG        # 应用日志
+    org.hibernate.SQL: DEBUG       # SQL日志
+    org.web3j: DEBUG              # Web3j日志
+```
+
+---
+
+## 📄 许可证
+
+本项目采用 MIT 许可证。
+
+---
+
+## 🆘 获取帮助
+
+遇到问题？
+
+1. 查看日志：`logs/brokerwallet-backend.log`
+2. 检查配置：`application.yml` 和 `blockchain-config.yml`
+3. 验证数据库：`mysql -u root -p brokerwallet`
+4. 测试连接：`curl http://localhost:5000/api/test`
+5. 参考文档：`../DEPLOYMENT_GUIDE.md`
+
+---
+
+**🎉 祝您使用愉快！**

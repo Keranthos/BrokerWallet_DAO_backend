@@ -46,6 +46,41 @@ public class FileUploadController {
     private AsyncFileProcessorService asyncFileProcessorService;
     
     /**
+     * 初始化方法：为旧数据生成批次ID
+     */
+    @jakarta.annotation.PostConstruct
+    public void initLegacyBatchIds() {
+        try {
+            // 查找所有没有批次ID的文件
+            List<ProofFile> filesWithoutBatchId = proofFileRepository.findAll().stream()
+                .filter(file -> file.getSubmissionBatchId() == null)
+                .toList();
+            
+            if (!filesWithoutBatchId.isEmpty()) {
+                logger.info("发现 {} 个文件没有批次ID，开始生成...", filesWithoutBatchId.size());
+                
+                for (ProofFile file : filesWithoutBatchId) {
+                    // 生成唯一的批次ID
+                    // 格式：LEGACY_BATCH_{userId}_{fileId}_{timestamp}
+                    long timestamp = file.getUploadTime().atZone(java.time.ZoneId.systemDefault())
+                        .toInstant().toEpochMilli();
+                    String batchId = String.format("LEGACY_BATCH_%d_%d_%d", 
+                        file.getUserAccountId(), file.getId(), timestamp);
+                    
+                    file.setSubmissionBatchId(batchId);
+                    proofFileRepository.save(file);
+                }
+                
+                logger.info("✅ 成功为 {} 个旧文件生成批次ID", filesWithoutBatchId.size());
+            } else {
+                logger.info("所有文件都已有批次ID");
+            }
+        } catch (Exception e) {
+            logger.error("生成旧数据批次ID失败", e);
+        }
+    }
+    
+    /**
      * 连接测试接口
      */
     @GetMapping("/test")
@@ -103,9 +138,30 @@ public class FileUploadController {
                 logger.info("Proof file {} saved to: {}", i+1, proofFilePath);
             }
             
-            // 3. 保存NFT图片到文件系统（如果有）
+            // 3. 检查NFT图片唯一性并保存到文件系统（如果有）
             String nftImagePath = null;
+            String nftImageHash = null;
             if (nftImage != null && !nftImage.isEmpty()) {
+                // 计算NFT图片的SHA-256哈希值
+                nftImageHash = calculateImageHash(nftImage);
+                logger.info("NFT image hash calculated: {}", nftImageHash);
+                
+                // 检查哈希是否已存在（仅针对用户上传的NFT图片）
+                if (proofFileRepository.existsByNftImageHash(nftImageHash)) {
+                    logger.warn("NFT image already exists with hash: {}", nftImageHash);
+                    response.put("success", false);
+                    response.put("message", "该NFT图片已存在，请上传不同的图片");
+                    response.put("errorCode", "DUPLICATE_NFT_IMAGE");
+                    
+                    // 清理已上传的证明文件
+                    for (String tempPath : tempFilePaths) {
+                        FileUtil.deleteFile(tempPath);
+                    }
+                    
+                    return ResponseEntity.badRequest().body(response);
+                }
+                
+                // 保存NFT图片到文件系统
                 String userNftDir = FileUtil.getUserNftDirectory(user.getId());
                 nftImagePath = FileUtil.saveFile(nftImage, userNftDir);
                 tempFilePaths.add(nftImagePath);
@@ -123,14 +179,30 @@ public class FileUploadController {
             user.setUpdateTime(LocalDateTime.now());
             userAccountService.save(user);
             
-            // 5. 保存所有证明文件到数据库
+            // 5. 生成提交批次ID（用于标识同一次提交的多个文件）
+            String submissionBatchId = "BATCH_" + user.getId() + "_" + System.currentTimeMillis();
+            logger.info("Generated submission batch ID: {}", submissionBatchId);
+            
+            // 6. 保存所有证明文件到数据库
             List<ProofFile> savedProofFiles = new ArrayList<>();
             for (int i = 0; i < proofFiles.length; i++) {
                 MultipartFile proofFile = proofFiles[i];
                 String proofFilePath = proofFilePaths.get(i);
                 ProofFile savedProofFile = saveProofFileToDatabase(proofFile, proofFilePath, user.getId());
+                
+                // 设置提交批次ID
+                savedProofFile.setSubmissionBatchId(submissionBatchId);
+                
+                // 如果是第一个证明文件且有NFT图片，保存NFT图片哈希
+                if (i == 0 && nftImageHash != null) {
+                    savedProofFile.setNftImageHash(nftImageHash);
+                }
+                
+                proofFileRepository.save(savedProofFile);
+                logger.info("Proof file {} database record created: ID={}, BatchID={}", 
+                           i+1, savedProofFile.getId(), submissionBatchId);
+                
                 savedProofFiles.add(savedProofFile);
-                logger.info("Proof file {} database record created: ID={}", i+1, savedProofFile.getId());
             }
             
             // 6. 保存NFT图片到数据库（如果有）
@@ -141,12 +213,12 @@ public class FileUploadController {
                 savedNftImage = saveNftImageToDatabase(nftImage, nftImagePath, user.getId(), firstProofFileId);
             }
             
-            // 5. 构建详细响应（为Android端优化）
+            // 7. 构建详细响应（为Android端优化）
             Map<String, Object> data = new HashMap<>();
             
-            // 生成提交ID（基于第一个证明文件的ID）
-            String submissionId = "SUB_" + savedProofFiles.get(0).getId() + "_" + System.currentTimeMillis();
-            data.put("submissionId", submissionId);
+            // 使用批次ID作为提交ID
+            data.put("submissionId", submissionBatchId);
+            data.put("submissionBatchId", submissionBatchId);
             data.put("status", "PENDING");  // 初始状态为待审核
             data.put("submitTime", LocalDateTime.now().toString());
             
@@ -224,6 +296,30 @@ public class FileUploadController {
             response.put("success", false);
             response.put("message", "File upload failed: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 计算图片的SHA-256哈希值
+     */
+    private String calculateImageHash(MultipartFile file) throws Exception {
+        try {
+            java.security.MessageDigest digest = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(file.getBytes());
+            
+            // 转换为十六进制字符串
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch (Exception e) {
+            logger.error("Failed to calculate image hash", e);
+            throw new Exception("计算图片哈希失败: " + e.getMessage());
         }
     }
     
@@ -341,18 +437,37 @@ public class FileUploadController {
             // 获取用户的所有证明文件（按时间倒序）
             List<ProofFile> allProofFiles = proofFileRepository.findByUserAccountIdOrderByUploadTimeDesc(user.getId());
             
+            // 按批次分组（使用LinkedHashMap保持顺序）
+            java.util.LinkedHashMap<String, List<ProofFile>> batchMap = new java.util.LinkedHashMap<>();
+            for (ProofFile file : allProofFiles) {
+                String batchId = file.getSubmissionBatchId();
+                if (batchId == null) {
+                    // 旧数据没有批次ID，使用文件ID作为唯一批次
+                    batchId = "LEGACY_" + file.getId();
+                }
+                batchMap.computeIfAbsent(batchId, k -> new ArrayList<>()).add(file);
+            }
+            
+            // 获取批次列表（已按时间排序）
+            List<List<ProofFile>> allBatches = new ArrayList<>(batchMap.values());
+            
             // 简单分页处理
             int start = page * size;
-            int end = Math.min(start + size, allProofFiles.size());
-            List<ProofFile> pagedFiles = allProofFiles.subList(start, end);
+            int end = Math.min(start + size, allBatches.size());
+            List<List<ProofFile>> pagedBatches = allBatches.subList(start, end);
             
             List<Map<String, Object>> submissions = new ArrayList<>();
-            for (ProofFile proofFile : pagedFiles) {
+            for (List<ProofFile> batchFiles : pagedBatches) {
+                // 使用批次中的第一个文件作为代表
+                ProofFile proofFile = batchFiles.get(0);
                 Map<String, Object> submission = new HashMap<>();
                 
                 // 基本信息
-                submission.put("submissionId", "SUB_" + proofFile.getId() + "_" + proofFile.getUploadTime().toString().hashCode());
+                submission.put("submissionId", proofFile.getSubmissionBatchId() != null ? 
+                    proofFile.getSubmissionBatchId() : "SUB_" + proofFile.getId() + "_" + proofFile.getUploadTime().toString().hashCode());
                 submission.put("id", proofFile.getId());
+                submission.put("batchId", proofFile.getSubmissionBatchId());
+                submission.put("fileCount", batchFiles.size());  // 该批次的文件数量
                 submission.put("fileName", proofFile.getOriginalName());
                 submission.put("fileSize", proofFile.getFileSize());
                 submission.put("fileType", proofFile.getFileType());
@@ -379,6 +494,15 @@ public class FileUploadController {
                 }
                 if (proofFile.getMedalTransactionHash() != null) {
                     submission.put("medalTransactionHash", proofFile.getMedalTransactionHash());
+                }
+                
+                // 代币奖励信息
+                if (proofFile.getTokenReward() != null && proofFile.getTokenReward().compareTo(java.math.BigDecimal.ZERO) > 0) {
+                    submission.put("tokenReward", proofFile.getTokenReward().toString());
+                    submission.put("tokenRewardTxHash", proofFile.getTokenRewardTxHash());
+                } else {
+                    submission.put("tokenReward", null);
+                    submission.put("tokenRewardTxHash", null);
                 }
                 
                 // 用户信息（前端需要）
@@ -416,9 +540,11 @@ public class FileUploadController {
             response.put("pagination", Map.of(
                 "currentPage", page,
                 "pageSize", size,
-                "totalItems", allProofFiles.size(),
-                "totalPages", (int) Math.ceil((double) allProofFiles.size() / size)
+                "totalItems", allBatches.size(),  // 使用批次数量
+                "totalPages", (int) Math.ceil((double) allBatches.size() / size)
             ));
+            
+            logger.info("返回 {} 个提交批次（共 {} 个文件）", submissions.size(), allProofFiles.size());
             
             return ResponseEntity.ok(response);
             
@@ -525,11 +651,11 @@ public class FileUploadController {
     private String getAuditStatusDescription(ProofFile.AuditStatus status) {
         switch (status) {
             case PENDING:
-                return "等待审核";
+                return "Pending";
             case APPROVED:
-                return "审核通过";
+                return "Approved";
             case REJECTED:
-                return "审核拒绝";
+                return "Rejected";
             default:
                 return status.name();
         }

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.core.methods.request.Transaction;
 import org.web3j.protocol.core.methods.response.EthCall;
 import org.web3j.protocol.core.methods.response.EthSendTransaction;
@@ -53,6 +54,9 @@ public class BlockchainService {
     @Value("${blockchain.contracts.nft-contract}")
     private String nftContractAddress;
     
+    @Value("${blockchain.contracts.token-contract}")
+    private String tokenContractAddress;
+    
     @Value("${blockchain.account-address}")
     private String accountAddress;
 
@@ -60,6 +64,7 @@ public class BlockchainService {
     public void init() {
         log.info("BlockchainService initialized with medal contract: {}", medalContractAddress);
         log.info("NFT contract: {}", nftContractAddress);
+        log.info("Token contract: {}", tokenContractAddress);
         log.info("Account address: {}", accountAddress);
     }
 
@@ -488,12 +493,33 @@ public class BlockchainService {
                 gasPrice = BigInteger.valueOf(1000000000L); // 1 Gwei as fallback
             }
             
-            // ✅ 使用合理的 gas limit（新方案只存储路径JSON，数据量极小）
-            // 存储路径JSON只需要约 ~500K gas，设置为 1M 以确保安全
-            BigInteger gasLimit = BigInteger.valueOf(1000000L); // 1M gas，足够存储路径JSON
-            log.info("=== Gas Limit Setting (Optimized for Path Storage) ===");
-            log.info("Set Gas Limit: {} (optimized for JSON metadata)", gasLimit);
-            log.info("Estimated gas for ~200 bytes JSON: ~500K, using 1M for safety");
+            // ✅ 动态设置 gas limit（根据图片数据大小，留足安全余量）
+            // 图片路径JSON: ~500K gas
+            // 默认样式JPEG Base64: ~1.5-2M gas（取决于描述长度）
+            // 用户上传大图片: 可能需要更多
+            BigInteger gasLimit;
+            int imageDataLength = request.getImageData() != null ? request.getImageData().length() : 0;
+            
+            if (imageDataLength > 10000) {
+                // 大图片数据（默认样式JPEG或用户上传的大图）
+                // 根据数据大小动态计算，每1KB数据约需要70-80 gas
+                long estimatedGas = (long) (imageDataLength * 80);
+                // 添加50%安全余量
+                long safeGas = (long) (estimatedGas * 1.5);
+                // 最小2M，最大5M
+                gasLimit = BigInteger.valueOf(Math.max(2000000L, Math.min(5000000L, safeGas)));
+                
+                log.info("=== Gas Limit Setting (Large Image Data) ===");
+                log.info("Image data length: {} bytes", imageDataLength);
+                log.info("Estimated gas: {}", estimatedGas);
+                log.info("Set Gas Limit: {} (with 50% safety margin)", gasLimit);
+            } else {
+                // 小数据（图片路径JSON）
+                gasLimit = BigInteger.valueOf(1000000L); // 1M gas
+                log.info("=== Gas Limit Setting (Small Metadata) ===");
+                log.info("Image data length: {} bytes", imageDataLength);
+                log.info("Set Gas Limit: {} (for small metadata)", gasLimit);
+            }
             
             // 创建交易对象 - 使用mintFee作为value（关键修复！）
             Transaction transaction = Transaction.createFunctionCallTransaction(
@@ -514,6 +540,35 @@ public class BlockchainService {
             log.info("Gas Limit: {}", gasLimit);
             log.info("Value: {}", transaction.getValue());
             log.info("Data: {}", transaction.getData());
+            
+            // 检查账户余额
+            try {
+                EthGetBalance balanceResponse = web3j.ethGetBalance(accountAddress, DefaultBlockParameterName.LATEST).send();
+                if (!balanceResponse.hasError()) {
+                    BigInteger balance = balanceResponse.getBalance();
+                    BigInteger estimatedGasCost = gasLimit.multiply(gasPrice);
+                    BigInteger totalRequired = mintFee.add(estimatedGasCost);
+                    
+                    log.info("=== Balance Check ===");
+                    log.info("Current balance: {} wei ({} ETH)", balance, balance.divide(BigInteger.valueOf(1000000000000000000L)));
+                    log.info("Mint fee: {} wei", mintFee);
+                    log.info("Estimated gas cost: {} wei", estimatedGasCost);
+                    log.info("Total required: {} wei ({} ETH)", totalRequired, totalRequired.divide(BigInteger.valueOf(1000000000000000000L)));
+                    
+                    if (balance.compareTo(totalRequired) < 0) {
+                        log.error("❌ Insufficient balance!");
+                        double balanceEth = balance.doubleValue() / 1e18;
+                        double requiredEth = totalRequired.doubleValue() / 1e18;
+                        return NftMintResponse.builder()
+                                .success(false)
+                                .message(String.format("后端账户余额不足！当前余额: %.6f ETH，需要: %.6f ETH（请为后端账户充值）", balanceEth, requiredEth))
+                                .build();
+                    }
+                    log.info("✅ Balance check passed");
+                }
+            } catch (Exception e) {
+                log.warn("Failed to check balance: {}", e.getMessage());
+            }
             
             // 发送交易
             EthSendTransaction ethSendTransaction = web3j.ethSendTransaction(transaction).send();
@@ -613,9 +668,22 @@ public class BlockchainService {
             org.web3j.abi.datatypes.DynamicArray<Uint256> tokenIds = 
                     (org.web3j.abi.datatypes.DynamicArray<Uint256>) results.get(0);
             
+            List<Uint256> allTokenIds = tokenIds.getValue();
+            int totalCount = allTokenIds.size();
+            
+            // ✅ 优化：只查询当前页需要的NFT，按时间倒序（最新的在前）
+            // 计算倒序的索引范围
+            int startIndex = totalCount - 1 - (page * size); // 从最后一个开始
+            int endIndex = Math.max(startIndex - size + 1, 0); // 确保不小于0
+            
+            log.info("✅ 优化分页查询（倒序）: 用户共有 {} 个NFT，只查询第 {} 到 {} 个（倒序）", 
+                    totalCount, startIndex + 1, endIndex + 1);
+            
             List<NftQueryResult.NftInfo> nftList = new java.util.ArrayList<>();
             
-            for (Uint256 tokenId : tokenIds.getValue()) {
+            // 从后往前遍历Token ID（最新的在前）
+            for (int i = startIndex; i >= endIndex; i--) {
+                Uint256 tokenId = allTokenIds.get(i);
                 try {
                     // 获取NFT数据
                     NftQueryResult.NftMetadata metadata = getNftData(tokenId.getValue());
@@ -648,24 +716,12 @@ public class BlockchainService {
                 }
             }
             
-            // 应用分页逻辑
-            int totalCount = nftList.size();
-            int startIndex = page * size;
-            int endIndex = Math.min(startIndex + size, totalCount);
-            
-            List<NftQueryResult.NftInfo> paginatedNfts;
-            if (startIndex >= totalCount) {
-                paginatedNfts = new java.util.ArrayList<>();
-            } else {
-                paginatedNfts = nftList.subList(startIndex, endIndex);
-            }
-            
-            log.info("NFT pagination result: Total={}, Page={}, PageSize={}, ReturnCount={}", 
-                    totalCount, page, size, paginatedNfts.size());
+            log.info("✅ 分页查询完成: Total={}, Page={}, PageSize={}, ReturnCount={}", 
+                    totalCount, page, size, nftList.size());
             
             return NftQueryResult.builder()
                     .address(address)
-                    .nfts(paginatedNfts)
+                    .nfts(nftList)
                     .totalCount(totalCount)
                     .build();
                     
@@ -699,23 +755,35 @@ public class BlockchainService {
                         .build();
             }
             
+            int totalCount = totalSupply.intValue();
+            
+            // ✅ 优化：只查询当前页需要的NFT，按时间倒序（最新的在前）
+            // 计算倒序的Token ID范围
+            int startTokenId = totalCount - (page * size); // 从最大的Token ID开始
+            int endTokenId = Math.max(startTokenId - size + 1, 1); // 确保不小于1
+            
+            log.info("✅ 优化分页查询（倒序）: 只查询 Token ID {} 到 {} (共 {} 个)", 
+                    startTokenId, endTokenId, startTokenId - endTokenId + 1);
+            
             List<NftQueryResult.NftInfo> nftList = new java.util.ArrayList<>();
             
-            // 遍历所有Token ID
-            for (BigInteger tokenId = BigInteger.ONE; tokenId.compareTo(totalSupply) <= 0; tokenId = tokenId.add(BigInteger.ONE)) {
+            // 从大到小遍历Token ID（最新的在前）
+            for (int tokenId = startTokenId; tokenId >= endTokenId; tokenId--) {
                 try {
+                    BigInteger tokenIdBig = BigInteger.valueOf(tokenId);
+                    
                     // 直接获取NFT数据（如果不存在会抛出异常）
-                    NftQueryResult.NftMetadata metadata = getNftData(tokenId);
+                    NftQueryResult.NftMetadata metadata = getNftData(tokenIdBig);
                     
                     // 获取NFT所有者
-                    String ownerAddress = getNftOwner(tokenId);
+                    String ownerAddress = getNftOwner(tokenIdBig);
                     
                     // 查询所有者的花名
                     String ownerDisplayName = getOwnerDisplayName(ownerAddress);
                     log.info("NFT #{} 持有者: {} ({})", tokenId, ownerAddress, ownerDisplayName);
                     
                     NftQueryResult.NftInfo nftInfo = NftQueryResult.NftInfo.builder()
-                            .tokenId(tokenId.toString())
+                            .tokenId(String.valueOf(tokenId))
                             .ownerAddress(ownerAddress)
                             .ownerDisplayName(ownerDisplayName)
                             .name(metadata.getName())
@@ -734,24 +802,12 @@ public class BlockchainService {
                 }
             }
             
-            // 应用分页逻辑
-            int totalCount = nftList.size();
-            int startIndex = page * size;
-            int endIndex = Math.min(startIndex + size, totalCount);
-            
-            List<NftQueryResult.NftInfo> paginatedNfts;
-            if (startIndex >= totalCount) {
-                paginatedNfts = new java.util.ArrayList<>();
-            } else {
-                paginatedNfts = nftList.subList(startIndex, endIndex);
-            }
-            
-            log.info("All NFTs pagination result: Total={}, Page={}, PageSize={}, ReturnCount={}", 
-                    totalCount, page, size, paginatedNfts.size());
+            log.info("✅ 分页查询完成: Total={}, Page={}, PageSize={}, ReturnCount={}", 
+                    totalCount, page, size, nftList.size());
             
             return NftQueryResult.builder()
                     .address("all")
-                    .nfts(paginatedNfts)
+                    .nfts(nftList)
                     .totalCount(totalCount)
                     .build();
                     
@@ -1245,5 +1301,158 @@ public class BlockchainService {
     
     public String getAccountAddress() {
         return accountAddress;
+    }
+    
+    public Web3j getWeb3j() {
+        return web3j;
+    }
+    
+    /**
+     * 查询代币余额
+     * @param address 查询地址
+     * @return 余额（wei）
+     */
+    public BigInteger getTokenBalance(String address) throws Exception {
+        log.info("查询代币余额: {}", address);
+        
+        // 标准化地址格式
+        if (!address.startsWith("0x")) {
+            address = "0x" + address;
+        }
+        
+        // 构建balanceOf函数调用
+        // function balanceOf(address account) returns (uint256)
+        Function balanceOfFunction = new Function(
+                "balanceOf",
+                Arrays.asList(new Address(address)),
+                Arrays.asList(new TypeReference<Uint256>() {})
+        );
+        
+        String encodedFunction = FunctionEncoder.encode(balanceOfFunction);
+        
+        // 调用合约
+        EthCall response = web3j.ethCall(
+                Transaction.createEthCallTransaction(address, tokenContractAddress, encodedFunction),
+                DefaultBlockParameterName.LATEST
+        ).send();
+        
+        log.info("余额查询响应: hasError={}, value={}", response.hasError(), response.getValue());
+        
+        if (response.hasError()) {
+            throw new RuntimeException("查询余额失败: " + response.getError().getMessage());
+        }
+        
+        String responseValue = response.getValue();
+        log.info("原始响应数据: {}", responseValue);
+        log.info("响应数据长度: {}", responseValue != null ? responseValue.length() : 0);
+        
+        // 解码结果
+        List<org.web3j.abi.datatypes.Type> results = FunctionReturnDecoder.decode(
+                responseValue, balanceOfFunction.getOutputParameters()
+        );
+        
+        log.info("解码结果数量: {}", results.size());
+        
+        if (results.isEmpty()) {
+            throw new RuntimeException("无法解析余额数据 - 响应: " + responseValue);
+        }
+        
+        BigInteger balance = (BigInteger) results.get(0).getValue();
+        log.info("代币余额: {} wei ({} Token)", balance, balance.divide(BigInteger.TEN.pow(18)));
+        
+        return balance;
+    }
+    
+    /**
+     * 转账原生代币作为奖励（直接转账，不调用合约）
+     * @param toAddress 接收地址
+     * @param amount 转账金额（单位：wei）
+     * @return 交易哈希
+     */
+    public String transferTokenReward(String toAddress, String amount) throws Exception {
+        log.info("=== 转账原生代币奖励 ===");
+        log.info("接收地址: {}", toAddress);
+        log.info("转账金额: {} wei", amount);
+        
+        // 标准化地址格式（确保有0x前缀）
+        if (!toAddress.startsWith("0x")) {
+            toAddress = "0x" + toAddress;
+        }
+        
+        // 将金额字符串转换为BigInteger
+        BigInteger amountInWei = new BigInteger(amount);
+        
+        // 获取管理员账户余额
+        BigInteger adminBalance = web3j.ethGetBalance(accountAddress, DefaultBlockParameterName.LATEST)
+                .send().getBalance();
+        log.info("管理员账户余额: {} wei ({} Token)", adminBalance, adminBalance.divide(BigInteger.TEN.pow(18)));
+        
+        // 检查余额是否充足（包括gas费用）
+        BigInteger gasPrice = web3j.ethGasPrice().send().getGasPrice();
+        BigInteger gasLimit = BigInteger.valueOf(21000); // 简单转账的gas limit
+        BigInteger totalCost = amountInWei.add(gasPrice.multiply(gasLimit));
+        
+        if (adminBalance.compareTo(totalCost) < 0) {
+            throw new RuntimeException(String.format("账户余额不足: 需要 %s wei（包括gas），但只有 %s wei", 
+                    totalCost, adminBalance));
+        }
+        
+        // 获取nonce
+        BigInteger nonce;
+        try {
+            EthGetTransactionCount ethGetTransactionCount = web3j.ethGetTransactionCount(
+                    accountAddress, DefaultBlockParameterName.LATEST).send();
+            nonce = ethGetTransactionCount.getTransactionCount();
+            log.info("当前nonce: {}", nonce);
+        } catch (Exception e) {
+            log.warn("获取nonce失败，使用默认值0: {}", e.getMessage());
+            nonce = BigInteger.ZERO;
+        }
+        
+        log.info("当前gas price: {} wei", gasPrice);
+        
+        // 创建简单的转账交易（BrokerChain要求必须有Data字段，即使是空值）
+        Transaction transaction = Transaction.createFunctionCallTransaction(
+                accountAddress,     // from
+                nonce,              // nonce
+                gasPrice,           // gas price
+                gasLimit,           // gas limit (21000 for simple transfer)
+                toAddress,          // to
+                amountInWei,        // value
+                "0x"                // data (空数据，但必须存在)
+        );
+        
+        log.info("交易信息:");
+        log.info("From: {}", accountAddress);
+        log.info("To: {}", toAddress);
+        log.info("Nonce: {}", nonce);
+        log.info("Gas Price: {}", gasPrice);
+        log.info("Gas Limit: {}", gasLimit);
+        log.info("Value: {} wei ({} Token)", amountInWei, amountInWei.divide(BigInteger.TEN.pow(18)));
+        log.info("Data: 0x (empty but required)");
+        
+        // 使用 eth_sendTransaction 发送交易（节点会自动签名）
+        EthSendTransaction ethSendTransaction = web3j.ethSendTransaction(transaction).send();
+        
+        if (ethSendTransaction.hasError()) {
+            log.error("转账失败: {}", ethSendTransaction.getError().getMessage());
+            log.error("错误代码: {}", ethSendTransaction.getError().getCode());
+            throw new RuntimeException("转账失败: " + ethSendTransaction.getError().getMessage());
+        }
+        
+        String txHash = ethSendTransaction.getTransactionHash();
+        
+        if (txHash != null && !txHash.isEmpty()) {
+            log.info("交易已发送，哈希: {}", txHash);
+            
+            // 等待交易确认
+            log.info("等待交易确认: {}", txHash);
+            TransactionReceipt receipt = waitForTransactionReceipt(txHash);
+            log.info("交易已确认！");
+            
+            return txHash;
+        } else {
+            throw new RuntimeException("交易发送失败或未返回交易哈希");
+        }
     }
 }

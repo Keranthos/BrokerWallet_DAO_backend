@@ -96,6 +96,31 @@ public class ProofFile {
     private String medalTransactionHash;
     
     /**
+     * 代币奖励数量（BKC，以Token为单位，不是wei）
+     */
+    @Column(name = "token_reward")
+    private java.math.BigDecimal tokenReward;
+    
+    /**
+     * 代币奖励交易哈希
+     */
+    @Column(name = "token_reward_tx_hash", length = 66)
+    private String tokenRewardTxHash;
+    
+    /**
+     * NFT图片的SHA-256哈希值，用于检查唯一性
+     */
+    @Column(name = "nft_image_hash", length = 64)
+    private String nftImageHash;
+    
+    /**
+     * 提交批次ID，用于标识同一次提交的多个文件
+     * 格式：BATCH_{userId}_{timestamp}
+     */
+    @Column(name = "submission_batch_id", length = 100)
+    private String submissionBatchId;
+    
+    /**
      * 文件状态：ACTIVE-正常, DELETED-已删除
      */
     @Enumerated(EnumType.STRING)
@@ -249,6 +274,38 @@ public class ProofFile {
     
     public void setMedalTransactionHash(String medalTransactionHash) {
         this.medalTransactionHash = medalTransactionHash;
+    }
+    
+    public java.math.BigDecimal getTokenReward() {
+        return tokenReward;
+    }
+    
+    public void setTokenReward(java.math.BigDecimal tokenReward) {
+        this.tokenReward = tokenReward;
+    }
+    
+    public String getTokenRewardTxHash() {
+        return tokenRewardTxHash;
+    }
+    
+    public void setTokenRewardTxHash(String tokenRewardTxHash) {
+        this.tokenRewardTxHash = tokenRewardTxHash;
+    }
+    
+    public String getNftImageHash() {
+        return nftImageHash;
+    }
+    
+    public void setNftImageHash(String nftImageHash) {
+        this.nftImageHash = nftImageHash;
+    }
+    
+    public String getSubmissionBatchId() {
+        return submissionBatchId;
+    }
+    
+    public void setSubmissionBatchId(String submissionBatchId) {
+        this.submissionBatchId = submissionBatchId;
     }
     
     @Override

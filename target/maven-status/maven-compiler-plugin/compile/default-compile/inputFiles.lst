@@ -3,6 +3,7 @@ D:\brokerwallet\BrokerWallet-backend\src\main\java\com\brokerwallet\dto\NftQuery
 D:\brokerwallet\BrokerWallet-backend\src\main\java\com\brokerwallet\dto\MedalQueryResult.java
 D:\brokerwallet\BrokerWallet-backend\src\main\java\com\brokerwallet\dto\NftMintRequest.java
 D:\brokerwallet\BrokerWallet-backend\src\main\java\com\brokerwallet\dto\DistributeResponse.java
+D:\brokerwallet\BrokerWallet-backend\src\main\java\com\brokerwallet\util\MedalImageGenerator.java
 D:\brokerwallet\BrokerWallet-backend\src\main\java\com\brokerwallet\config\WebConfig.java
 D:\brokerwallet\BrokerWallet-backend\src\main\java\com\brokerwallet\controller\FileUploadController.java
 D:\brokerwallet\BrokerWallet-backend\src\main\java\com\brokerwallet\repository\UserAccountRepository.java
