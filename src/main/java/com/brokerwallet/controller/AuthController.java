@@ -2,6 +2,7 @@ package com.brokerwallet.controller;
 
 import com.brokerwallet.entity.Admin;
 import com.brokerwallet.service.AdminService;
+import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,13 @@ public class AuthController {
     @Autowired
     private AdminService adminService;
     
+    private static final String ADMIN_SESSION_KEY = "ADMIN_USER";
+    
     /**
      * 管理员登录
      */
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> request) {
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> request, HttpSession session) {
         Map<String, Object> response = new HashMap<>();
         
         try {
@@ -62,22 +65,25 @@ public class AuthController {
                 return ResponseEntity.status(401).body(response);
             }
             
-            // 生成简单的token（实际项目中应该使用JWT）
-            String token = UUID.randomUUID().toString();
+            // 将管理员信息存入Session
+            Map<String, Object> adminInfo = Map.of(
+                "id", admin.getId(),
+                "username", admin.getUsername(),
+                "displayName", admin.getDisplayName() != null ? admin.getDisplayName() : admin.getUsername(),
+                "role", admin.getRole()
+            );
+            session.setAttribute(ADMIN_SESSION_KEY, adminInfo);
+            
+            // 设置Session超时时间（30分钟）
+            session.setMaxInactiveInterval(30 * 60);
             
             // 返回成功信息
             response.put("code", 1);
             response.put("success", true);
             response.put("message", "登录成功");
-            response.put("token", token);
-            response.put("user", Map.of(
-                "id", admin.getId(),
-                "username", admin.getUsername(),
-                "displayName", admin.getDisplayName() != null ? admin.getDisplayName() : admin.getUsername(),
-                "role", admin.getRole()
-            ));
+            response.put("user", adminInfo);
             
-            logger.info("登录成功: username={}, id={}", username, admin.getId());
+            logger.info("登录成功: username={}, id={}, sessionId={}", username, admin.getId(), session.getId());
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
@@ -270,6 +276,65 @@ public class AuthController {
             response.put("code", 0);
             response.put("success", false);
             response.put("message", "确保admin账户失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 登出
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<Map<String, Object>> logout(HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // 清除Session
+            session.invalidate();
+            
+            response.put("code", 1);
+            response.put("success", true);
+            response.put("message", "登出成功");
+            
+            logger.info("登出成功");
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("登出失败", e);
+            response.put("code", 0);
+            response.put("success", false);
+            response.put("message", "登出失败: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+    
+    /**
+     * 获取当前登录的管理员信息
+     */
+    @GetMapping("/current")
+    public ResponseEntity<Map<String, Object>> getCurrentAdmin(HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            Object adminInfo = session.getAttribute(ADMIN_SESSION_KEY);
+            
+            if (adminInfo == null) {
+                response.put("code", 0);
+                response.put("success", false);
+                response.put("message", "未登录");
+                return ResponseEntity.status(401).body(response);
+            }
+            
+            response.put("code", 1);
+            response.put("success", true);
+            response.put("user", adminInfo);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            logger.error("获取当前管理员信息失败", e);
+            response.put("code", 0);
+            response.put("success", false);
+            response.put("message", "获取信息失败: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }

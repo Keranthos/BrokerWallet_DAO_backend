@@ -1,45 +1,43 @@
 package com.brokerwallet.config;
 
+import com.brokerwallet.interceptor.AdminAuthInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * Web配置类
- * 配置静态资源访问和CORS
+ * 配置跨域和拦截器
  */
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    /**
-     * 配置静态资源访问
-     * 允许通过URL直接访问uploads目录下的图片
-     */
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 配置静态资源映射：/uploads/** -> uploads/
-        registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:uploads/")
-                .setCachePeriod(3600); // 缓存1小时
-        
-        System.out.println("✅ Static resource handler configured: /uploads/** -> file:uploads/");
-    }
+    @Autowired
+    private AdminAuthInterceptor adminAuthInterceptor;
 
-    /**
-     * 配置CORS（跨域资源共享）
-     * 允许手机端通过IP地址访问后端
-     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOriginPatterns("*") // 使用allowedOriginPatterns而不是allowedOrigins
+                .allowedOrigins("http://localhost:3000", "http://localhost:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true) // 允许携带凭证（cookies等）
+                .allowCredentials(true)  // 重要：允许携带Cookie和Session
                 .maxAge(3600);
-        
-        System.out.println("✅ CORS configured: Allow all origin patterns with credentials");
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(adminAuthInterceptor)
+                // 拦截所有管理员相关的接口
+                .addPathPatterns("/api/admin/**")
+                // 排除不需要认证的路径（登录、注册、初始化相关）
+                .excludePathPatterns(
+                        "/api/auth/login",
+                        "/api/auth/register",
+                        "/api/auth/check-init",
+                        "/api/auth/ensure-admin"
+                );
     }
 }
-
