@@ -403,9 +403,17 @@ POST /api/upload/complete
 GET  /api/upload/user/submissions
 GET  /api/upload/submission/detail/{id}
 GET  /api/blockchain/nft/user/{address}
+GET  /api/blockchain/nft/all
+GET  /api/blockchain/medals/{address}
+GET  /api/blockchain/global-stats
+GET  /api/blockchain/health
+GET  /api/admin/nft-image/{imageName}        # NFT图片访问（Web管理员端使用）
+GET  /api/admin/nft-thumbnail/{imageName}    # NFT缩略图访问（Web管理员端使用）
+GET  /api/admin/user/info/{walletAddress}   # 用户信息查询（手机端需要）
+GET  /uploads/**                             # 静态文件访问（手机端NFT图片直接访问）
 ```
 
-### 🔒 需要认证的接口（所有 /api/admin/** 路径）
+### 🔒 需要认证的接口（管理员专用）
 
 ```
 # 用户管理（5个）
@@ -419,9 +427,13 @@ GET  /api/admin/search-by-display-name
 POST /api/admin/review
 POST /api/admin/update-proof-status
 
-# NFT管理（2个）
-POST /api/blockchain/nft/mint
-POST /api/admin/generate-default-nft-image
+# NFT管理（6个）
+POST /api/blockchain/nft/mint                   # NFT铸造
+GET  /api/blockchain/check-nft-permission       # 检查NFT权限
+GET  /api/blockchain/nft/check-permission       # 检查铸造权限
+GET  /api/blockchain/nft/mint-fee               # 查询铸造费用
+GET  /api/blockchain/test-contract              # 测试合约连接
+POST /api/admin/generate-default-nft-image      # 生成默认NFT图片
 
 # 奖励管理（2个）
 POST /api/admin/transfer-reward
@@ -433,7 +445,7 @@ GET  /api/admin/account-status
 GET  /api/admin/download/{objectKey}
 ```
 
-**总计**：14个受保护的管理员接口
+**总计**：18个受保护的管理员接口
 
 ---
 
