@@ -156,6 +156,34 @@ SELECT '✅ 数据库初始化完成！' as message,
        '包含所有最新字段（批次提交、NFT唯一性等）' as features;
 
 -- ===================================
+-- 4. 创建管理员表
+-- ===================================
+CREATE TABLE IF NOT EXISTS `admins` (
+    `id` BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '管理员ID',
+    `username` VARCHAR(50) NOT NULL UNIQUE COMMENT '管理员用户名（唯一）',
+    `password` VARCHAR(255) NOT NULL COMMENT '密码（SHA-256哈希）',
+    `display_name` VARCHAR(100) COMMENT '显示名称',
+    `email` VARCHAR(100) COMMENT '邮箱',
+    `role` VARCHAR(20) NOT NULL DEFAULT 'admin' COMMENT '角色（admin, super_admin）',
+    `status` ENUM('ACTIVE', 'DISABLED', 'LOCKED') NOT NULL DEFAULT 'ACTIVE' COMMENT '账户状态',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` DATETIME ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    `last_login_at` DATETIME COMMENT '最后登录时间',
+    `created_by` BIGINT COMMENT '创建者ID（追溯）',
+    
+    -- 索引
+    INDEX `idx_username` (`username`),
+    INDEX `idx_email` (`email`),
+    INDEX `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='管理员表';
+
+-- 创建默认管理员（用户名: admin, 密码: admin123）
+-- 密码哈希: SHA-256("admin123") = 240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9
+INSERT INTO `admins` (`username`, `password`, `display_name`, `role`, `status`, `created_at`)
+VALUES ('admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', '默认管理员', 'admin', 'ACTIVE', NOW())
+ON DUPLICATE KEY UPDATE `username` = `username`;  -- 如果已存在则不插入
+
+-- ===================================
 -- 使用说明
 -- ===================================
 -- 1. 确保MySQL已安装并运行
@@ -165,3 +193,7 @@ SELECT '✅ 数据库初始化完成！' as message,
 --    source /path/to/init.sql
 -- 4. 修改 application.yml 中的数据库连接信息
 -- 5. 启动后端服务，JPA会自动维护表结构
+-- 6. 默认管理员账号：
+--    用户名: admin
+--    密码: admin123
+--    ⚠️ 首次登录后请立即修改密码或创建新管理员！

@@ -723,11 +723,31 @@ public class AdminController {
             }
             
             // 查找关联的NFT图片（如果有）
-            List<com.brokerwallet.entity.NftImage> userNftImages = nftImageRepository.findByUserAccountIdOrderByUploadTimeDesc(user.getId());
+            // ⭐ 修复：查询与该批次关联的NFT图片，而不是用户最新的NFT
+            List<com.brokerwallet.entity.NftImage> batchNftImages = new ArrayList<>();
+            for (ProofFile file : batchFiles) {
+                List<com.brokerwallet.entity.NftImage> fileNfts = nftImageRepository.findByProofFileId(file.getId());
+                if (!fileNfts.isEmpty()) {
+                    batchNftImages.addAll(fileNfts);
+                }
+            }
+            
+            // ⚠️ 兼容性处理：如果没有找到批次关联的NFT，回退到查询用户最新的NFT（兼容旧数据）
+            if (batchNftImages.isEmpty()) {
+                logger.info("未找到批次关联的NFT，尝试查询用户最新的NFT（兼容旧数据）");
+                List<com.brokerwallet.entity.NftImage> userNftImages = 
+                        nftImageRepository.findByUserAccountIdOrderByUploadTimeDesc(user.getId());
+                if (!userNftImages.isEmpty()) {
+                    batchNftImages.add(userNftImages.get(0));
+                    logger.info("找到用户最新的NFT作为回退: id={}", userNftImages.get(0).getId());
+                }
+            }
+            
             Map<String, Object> nftImageInfo = null;
-            if (!userNftImages.isEmpty()) {
-                // 取最新上传的NFT图片
-                com.brokerwallet.entity.NftImage nftImage = userNftImages.get(0);
+            if (!batchNftImages.isEmpty()) {
+                // 取该批次的第一个NFT图片（一个批次只能上传一张NFT）
+                com.brokerwallet.entity.NftImage nftImage = batchNftImages.get(0);
+                logger.info("使用NFT图片: id={}, proofFileId={}", nftImage.getId(), nftImage.getProofFileId());
                 nftImageInfo = new HashMap<>();
                 nftImageInfo.put("id", nftImage.getId());
                 nftImageInfo.put("originalName", nftImage.getOriginalName());

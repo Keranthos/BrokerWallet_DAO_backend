@@ -47,6 +47,7 @@ public class BlockchainService {
 
     private final Web3j web3j;
     private final com.brokerwallet.repository.UserAccountRepository userAccountRepository;
+    private final com.brokerwallet.repository.NftImageRepository nftImageRepository;
     
     @Value("${blockchain.contracts.medal-contract}")
     private String medalContractAddress;
@@ -601,6 +602,32 @@ public class BlockchainService {
                     log.warn("Failed to get total supply, using tx hash as token ID");
                     tokenId = txHash;
                 }
+            }
+            
+            // ⭐ 更新数据库中的NFT记录（如果提供了nftImageId）
+            if (request.getNftImageId() != null) {
+                try {
+                    log.info("更新数据库中的NFT记录: nftImageId={}", request.getNftImageId());
+                    Optional<com.brokerwallet.entity.NftImage> nftImageOpt = 
+                            nftImageRepository.findById(request.getNftImageId());
+                    
+                    if (nftImageOpt.isPresent()) {
+                        com.brokerwallet.entity.NftImage nftImage = nftImageOpt.get();
+                        nftImage.setMintStatus(com.brokerwallet.entity.NftImage.MintStatus.SUCCESS);
+                        nftImage.setTransactionHash(txHash);
+                        nftImage.setTokenId(tokenId);
+                        nftImageRepository.save(nftImage);
+                        log.info("✅ NFT记录更新成功: id={}, tokenId={}, txHash={}", 
+                                nftImage.getId(), tokenId, txHash);
+                    } else {
+                        log.warn("⚠️ 未找到NFT记录: nftImageId={}", request.getNftImageId());
+                    }
+                } catch (Exception e) {
+                    log.error("❌ 更新NFT记录失败: {}", e.getMessage(), e);
+                    // 不影响铸造结果，只记录错误
+                }
+            } else {
+                log.info("未提供nftImageId，跳过数据库更新");
             }
             
             return NftMintResponse.builder()

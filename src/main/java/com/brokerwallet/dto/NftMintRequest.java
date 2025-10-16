@@ -72,4 +72,10 @@ public class NftMintRequest {
      * 时间戳
      */
     private String timestamp;
+    
+    /**
+     * NFT图片记录ID（用于更新数据库中的NFT记录）
+     * 可选字段，如果提供则在铸造成功后更新对应的数据库记录
+     */
+    private Long nftImageId;
 }
